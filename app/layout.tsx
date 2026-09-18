@@ -14,8 +14,14 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
+const SITE_URL = "https://developermeet.vercel.app";
+
 export const metadata: Metadata = {
-	title: "DevMeet",
+	metadataBase: new URL(SITE_URL),
+	title: {
+		default: "DevMeet",
+		template: "%s | DevMeet",
+	},
 	description: "Coding Interview Platform",
 	icons: { icon: "/favicon.ico" },
 	verification: {
@@ -24,14 +30,14 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: "DevMeet",
 		description: "Coding Interview Platform",
-		url: "https://developermeet.vercel.app",
-		images: ["https://developermeet.vercel.app/preview.png"],
+		url: SITE_URL,
+		images: [`${SITE_URL}/preview.png`],
 	},
 	twitter: {
 		card: "summary_large_image",
 		title: "DevMeet",
 		description: "Coding Interview Platform",
-		images: ["https://developermeet.vercel.app/preview.png"],
+		images: [`${SITE_URL}/preview.png`],
 	},
 };
 

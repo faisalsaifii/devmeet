@@ -6,7 +6,6 @@ import { useSocket } from "./Context";
 type CodeEditorProps = {
 	value?: string;
 	onChange?: (value?: string) => void;
-	handleChange?: (value?: string) => void;
 	language?: string;
 };
 
@@ -23,8 +22,14 @@ const CodeEditor = ({ value, onChange, language }: CodeEditorProps) => {
 					selectOnLineNumbers: true,
 					colorDecorators: true,
 					fontSize: Number(editorFontSize),
+					automaticLayout: true,
 				}}
 				onChange={onChange}
+				loading={
+					<div className="w-full h-full flex items-center justify-center text-sm font-thin text-neutral-400">
+						Loading editor...
+					</div>
+				}
 			/>
 		</div>
 	);

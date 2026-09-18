@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import NavBar from "./NavBar/NavBarHome";
 
@@ -6,12 +7,13 @@ function Homepage() {
 		<>
 			<NavBar />
 			<div className="flex flex-col items-center justify-center h-full pt-14 pb-48">
-				<img
+				<Image
 					className="rounded-full"
 					height={380}
 					width={380}
 					src="/img/logo.svg"
 					alt="Logo"
+					priority
 				/>
 				<h1 className="text-6xl md:text-9xl">
 					<span className="font-bold">Dev</span>Meet

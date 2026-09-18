@@ -110,8 +110,6 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
 		localStorage.setItem("current-window", currentWindow);
 	}, [hydrated, editorTheme, editorFontSize, currentWindow]);
 
-	useEffect(() => console.log(pyCode), [pyCode]);
-
 	useEffect(() => {
 		const socket = io(process.env.NEXT_PUBLIC_SERVER_URL ?? "");
 		socketRef.current = socket;

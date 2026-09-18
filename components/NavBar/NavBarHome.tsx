@@ -1,13 +1,21 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import Github from "../../icons/Github";
 
 const NavBar = ({ setShowInfo }: { setShowInfo?: (show: boolean) => void }) => {
 	return (
 		<nav className="absolute top-0 w-full h-18 flex items-center p-2 justify-between">
-			<a href="https://developermeet.vercel.app">
-				<img className="h-10 rounded-full" src="/img/logo.svg" alt="Logo" />
-			</a>
+			<Link href="/">
+				<Image
+					className="h-10 w-10 rounded-full"
+					width={40}
+					height={40}
+					src="/img/logo.svg"
+					alt="Logo"
+				/>
+			</Link>
 
 			<div className="flex">
 				<a
@@ -31,7 +39,13 @@ const NavBar = ({ setShowInfo }: { setShowInfo?: (show: boolean) => void }) => {
 					title="Info"
 					onClick={() => setShowInfo?.(true)}
 				>
-					<img className="h-full" src="/img/info.svg" alt="Info" />
+					<Image
+						className="h-full w-auto"
+						width={24}
+						height={24}
+						src="/img/info.svg"
+						alt="Info"
+					/>
 				</button>
 			</div>
 		</nav>

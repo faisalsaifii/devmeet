@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useSocket } from "../Context";
 
@@ -44,7 +45,12 @@ const Options = () => {
 							className="bg-purple-400 rounded-md h-10 w-10 p-2"
 							title="Copy Meet ID"
 						>
-							<img src="/copy.svg" alt="Copy ID" />
+							<Image
+								width={24}
+								height={24}
+								src="/copy.svg"
+								alt="Copy ID"
+							/>
 						</button>
 					</CopyToClipboard>
 				</div>
@@ -68,7 +74,12 @@ const Options = () => {
 							className="bg-red-400 rounded-md h-10 w-10 p-2"
 							title="Hang Up"
 						>
-							<img src="/cut.svg" alt="Hang Up" />
+							<Image
+								width={24}
+								height={24}
+								src="/cut.svg"
+								alt="Hang Up"
+							/>
 						</button>
 					) : (
 						<>
@@ -78,7 +89,12 @@ const Options = () => {
 									className="bg-green-400 rounded-md h-10 w-10 p-2"
 									title="Call"
 								>
-									<img src="/call.svg" alt="Call" />
+									<Image
+										width={24}
+										height={24}
+										src="/call.svg"
+										alt="Call"
+									/>
 								</button>
 							) : (
 								<div className="h-10 w-10"></div>
