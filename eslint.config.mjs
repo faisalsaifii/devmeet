@@ -13,7 +13,6 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     // Other apps in the repo that are not part of the Next.js app:
-    "backend/**",
     "frontend/**",
   ]),
 ]);

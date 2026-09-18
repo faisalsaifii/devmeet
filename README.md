@@ -20,17 +20,7 @@ Became tired of companies still using zoom or google meet to take coding intervi
 
 ## Run Locally
 
-Frontend
-
 ```bash
 pnpm i
 pnpm run dev
-```
-
-Backend
-
-```bash
-cd backend
-npm i
-npm run dev
 ```

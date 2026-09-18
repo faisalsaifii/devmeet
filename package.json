@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "tsx server.ts",
     "build": "next build",
-    "start": "next start",
+    "start": "cross-env NODE_ENV=production tsx server.ts",
     "lint": "eslint"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "react-copy-to-clipboard": "^5.1.1",
     "react-dom": "19.2.8",
     "simple-peer": "^9.11.1",
+    "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
@@ -25,9 +26,11 @@
     "@types/react-copy-to-clipboard": "^5.0.7",
     "@types/react-dom": "^19",
     "@types/simple-peer": "^9.11.9",
+    "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
+    "tsx": "^4",
     "typescript": "^5"
   },
   "packageManager": "pnpm@10.13.1"

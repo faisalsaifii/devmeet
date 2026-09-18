@@ -111,7 +111,7 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
 	}, [hydrated, editorTheme, editorFontSize, currentWindow]);
 
 	useEffect(() => {
-		const socket = io(process.env.NEXT_PUBLIC_SERVER_URL ?? "");
+		const socket = io();
 		socketRef.current = socket;
 
 		let localStream: MediaStream | undefined;

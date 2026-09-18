@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: devmeet
+    runtime: node
+    region: oregon
+    plan: free
+    healthCheckPath: /
+    buildCommand: pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: JUDGE0_API_KEY
+        sync: false
