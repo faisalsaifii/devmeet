@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import MeetShell from "@/components/MeetShell";
+import { ContextProvider } from "@/components/Context";
 
 export const metadata: Metadata = {
 	title: "Start a Meeting",
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function MeetPage() {
-	return <MeetShell />;
+	return (
+		<ContextProvider>
+			<MeetShell />
+		</ContextProvider>
+	);
 }
