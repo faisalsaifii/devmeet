@@ -1,6 +1,6 @@
 import NavBar from "@/components/NavBar/NavBarHome";
 import Image from "next/image";
-import Link from "next/link";
+import StartMeeting from "@/components/StartMeeting";
 
 export default function Home() {
   return (
@@ -19,12 +19,7 @@ export default function Home() {
           <span className="font-bold">Dev</span>Meet
         </h1>
         <p className="font-thin text-2xl">Tech Interviews Made Easy</p>
-        <Link
-          href="/meet"
-          className="text-lg m-8 flex p-3 items-center justify-center mx-2 font-thin rounded-md bg-neutral-200 dark:bg-neutral-800"
-        >
-          Start a Meeting Now
-        </Link>
+        <StartMeeting />
         <footer className="absolute bottom-0 pb-2 font-thin text-sm text-gray-300">
           For Developers by Developers.
         </footer>

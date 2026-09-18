@@ -21,11 +21,11 @@ const Info = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 			</button>
 			<h2 className="font-bold text-3xl mt-10">How to use?</h2>
 			<ol className="list-decimal font-thin text-lg m-2 ml-10">
+				<li>Click &apos;Start a Meeting Now&apos;</li>
 				<li>Enter your name</li>
-				<li>Copy your Meet ID</li>
+				<li>Copy the invite link with the copy button</li>
 				<li>
-					Share your Meet ID and ask them to paste your Meet ID and
-					call you
+					Share the link so the other person joins the same room
 				</li>
 				<li>You will get an invitation to join the call</li>
 				<li>Join the call</li>

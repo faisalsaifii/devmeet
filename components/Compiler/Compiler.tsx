@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import CodeEditor from "../CodeEditor";
 import { useSocket } from "../Context";
+import { useCodeCollab } from "./useCodeCollab";
 
 const LANGUAGES = {
 	"54": { label: "C++", monaco: "cpp", code: "cpp" },
@@ -14,19 +15,14 @@ const LANGUAGES = {
 
 const Compiler = () => {
 	const {
+		roomId,
 		editorTheme,
 		setEditorTheme,
 		editorFontSize,
 		setEditorFontSize,
-		cCode,
-		javaCode,
-		pyCode,
-		cppCode,
-		handleCCodeChange,
-		handleCppCodeChange,
-		handleJavaCodeChange,
-		handlePyCodeChange,
 	} = useSocket();
+
+	const collab = useCodeCollab(roomId);
 
 	const [input, setInput] = useState("");
 	const [output, setOutput] = useState("");
@@ -54,11 +50,9 @@ const Compiler = () => {
 	}, [hydrated, languageId, input, output, currentWindow]);
 
 	const getSourceCode = () => {
+		if (!collab) return "";
 		const key = LANGUAGES[languageId as keyof typeof LANGUAGES]?.code;
-		if (key === "c") return cCode;
-		if (key === "cpp") return cppCode;
-		if (key === "java") return javaCode;
-		return pyCode;
+		return collab.doc.getText(key).toString();
 	};
 
 	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -90,24 +84,6 @@ const Compiler = () => {
 	};
 
 	const language = LANGUAGES[languageId as keyof typeof LANGUAGES];
-	const codeEditor = {
-		value:
-			language.code === "c"
-				? cCode
-				: language.code === "cpp"
-				? cppCode
-				: language.code === "java"
-				? javaCode
-				: pyCode,
-		onChange:
-			language.code === "c"
-				? handleCCodeChange
-				: language.code === "cpp"
-				? handleCppCodeChange
-				: language.code === "java"
-				? handleJavaCodeChange
-				: handlePyCodeChange,
-	};
 
 	return (
 		<>
@@ -163,8 +139,8 @@ const Compiler = () => {
 				</span>
 				<CodeEditor
 					key={languageId}
-					value={codeEditor.value}
-					onChange={codeEditor.onChange}
+					ytext={collab ? collab.doc.getText(language.code) : undefined}
+					awareness={collab?.provider.awareness}
 					language={language.monaco}
 				/>
 			</div>

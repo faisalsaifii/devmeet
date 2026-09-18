@@ -25,3 +25,24 @@ body {
 .overflow-guard {
 	border-radius: 0.25rem;
 }
+
+/* Remote cursors / selections shared via Yjs collaboration */
+.yRemoteSelection {
+	background-color: rgba(250, 129, 0, 0.5);
+}
+
+.yRemoteSelectionHead {
+	position: absolute;
+	border-left: 2px solid #fa8100;
+	box-sizing: border-box;
+}
+
+.yRemoteSelectionHead::before {
+	content: "";
+	position: absolute;
+	left: -2px;
+	background-color: #fa8100;
+	width: 5px;
+	height: 5px;
+	top: -5px;
+}

@@ -10,9 +10,10 @@ Became tired of companies still using zoom or google meet to take coding intervi
 
 ## Usage
 
+- Click 'Start a Meeting Now' to create a room
 - Enter your name
-- Copy your Meet ID
-- Share your Meet ID and ask them to paste your Meet ID and call you
+- Copy the invite link
+- Share the link so the other person joins the same room
 - You will get an invitation to join the call
 - Join the call
 - Start Coding

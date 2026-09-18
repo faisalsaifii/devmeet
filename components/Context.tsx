@@ -22,6 +22,7 @@ type Call = {
 };
 
 type SocketContextValue = {
+	roomId: string;
 	call: Call;
 	callAccepted: boolean;
 	myVideo: RefObject<HTMLVideoElement | null>;
@@ -31,7 +32,7 @@ type SocketContextValue = {
 	setName: (name: string) => void;
 	callEnded: boolean;
 	me: string;
-	callUser: (id: string) => void;
+	callUser: () => void;
 	leaveCall: () => void;
 	answerCall: () => void;
 	editorTheme: string;
@@ -40,18 +41,6 @@ type SocketContextValue = {
 	setEditorFontSize: (size: string | number) => void;
 	currentWindow: string;
 	setCurrentWindow: (window: string) => void;
-	cCode: string;
-	setCCode: (code: string) => void;
-	javaCode: string;
-	setJavaCode: (code: string) => void;
-	pyCode: string;
-	setPyCode: (code: string) => void;
-	cppCode: string;
-	setCppCode: (code: string) => void;
-	handleCCodeChange: (value?: string) => void;
-	handleCppCodeChange: (value?: string) => void;
-	handleJavaCodeChange: (value?: string) => void;
-	handlePyCodeChange: (value?: string) => void;
 };
 
 export const SocketContext = createContext<SocketContextValue | null>(null);
@@ -69,17 +58,19 @@ const getStoredValue = (key: string, fallback: string) => {
 	return window.localStorage.getItem(key) ?? fallback;
 };
 
-const ContextProvider = ({ children }: { children: ReactNode }) => {
+const ContextProvider = ({
+	children,
+	roomId,
+}: {
+	children: ReactNode;
+	roomId?: string;
+}) => {
 	const [callAccepted, setCallAccepted] = useState(false);
 	const [callEnded, setCallEnded] = useState(false);
 	const [stream, setStream] = useState<MediaStream>();
 	const [name, setName] = useState("");
 	const [call, setCall] = useState<Call>({});
 	const [me, setMe] = useState("");
-	const [cCode, setCCode] = useState("");
-	const [javaCode, setJavaCode] = useState("");
-	const [pyCode, setPyCode] = useState("");
-	const [cppCode, setCppCode] = useState("");
 	const [editorTheme, setEditorTheme] = useState("vs-dark");
 	const [editorFontSize, setEditorFontSize] = useState<string | number>(18);
 	const [currentWindow, setCurrentWindow] = useState("both");
@@ -89,13 +80,17 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
 	const userVideo = useRef<HTMLVideoElement | null>(null);
 	const connectionRef = useRef<PeerInstance | null>(null);
 	const socketRef = useRef<Socket | null>(null);
+	const callUserRef = useRef<() => void>(() => {});
+	const answerCallRef = useRef<() => void>(() => {});
+	const streamRef = useRef<MediaStream | undefined>(undefined);
+	const callRef = useRef<Call>({});
+	const callAcceptedRef = useRef(false);
+	const callEndedRef = useRef(false);
+	const pendingCallRef = useRef(false);
+	const pendingAnswerRef = useRef(false);
 
 	/* eslint-disable react-hooks/set-state-in-effect -- hydrate persisted state on the client only */
 	useEffect(() => {
-		setCCode(getStoredValue("c-code", ""));
-		setJavaCode(getStoredValue("java-code", ""));
-		setPyCode(getStoredValue("py-code", ""));
-		setCppCode(getStoredValue("cpp-code", ""));
 		setEditorTheme(getStoredValue("editor-theme", "vs-dark"));
 		setEditorFontSize(getStoredValue("editor-font-size", "18"));
 		setCurrentWindow(getStoredValue("current-window", "both"));
@@ -120,14 +115,34 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
 			.getUserMedia({ video: true, audio: true })
 			.then((currentStream) => {
 				localStream = currentStream;
+				streamRef.current = currentStream;
 				setStream(currentStream);
 				if (myVideo.current) {
 					myVideo.current.srcObject = currentStream;
+				}
+				if (pendingCallRef.current) {
+					pendingCallRef.current = false;
+					callUserRef.current();
+				}
+				if (pendingAnswerRef.current) {
+					pendingAnswerRef.current = false;
+					answerCallRef.current();
 				}
 			})
 			.catch((err) => console.log(err));
 
 		socket.on("me", (id: string) => setMe(id));
+
+		socket.on("user-joined", () => {
+			if (callAcceptedRef.current || callEndedRef.current) {
+				return;
+			}
+			if (streamRef.current) {
+				callUserRef.current();
+			} else {
+				pendingCallRef.current = true;
+			}
+		});
 
 		socket.on(
 			"callUser",
@@ -141,71 +156,39 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
 				signal: unknown;
 			}) => {
 				setCall({ isReceivingCall: true, from, name: callerName, signal });
+				if (callAcceptedRef.current || callEndedRef.current) {
+					return;
+				}
+				if (streamRef.current) {
+					answerCallRef.current();
+				} else {
+					pendingAnswerRef.current = true;
+				}
 			}
 		);
 
-		socket.on("cCodeChange", ({ code }: { code: string }) => {
-			setCCode(code);
-			localStorage.setItem("c-code", code);
-		});
-
-		socket.on("cppCodeChange", ({ code }: { code: string }) => {
-			setCppCode(code);
-			localStorage.setItem("cpp-code", code);
-		});
-
-		socket.on("pyCodeChange", ({ code }: { code: string }) => {
-			setPyCode(code);
-			localStorage.setItem("py-code", code);
-		});
-
-		socket.on("javaCodeChange", ({ code }: { code: string }) => {
-			setJavaCode(code);
-			localStorage.setItem("java-code", code);
-		});
+		if (roomId) {
+			socket.emit("join-room", roomId);
+		}
 
 		return () => {
 			socket.disconnect();
 			localStream?.getTracks().forEach((track) => track.stop());
 		};
-	}, []);
-
-	const handleCCodeChange = (newValue?: string) => {
-		const code = newValue ?? "";
-		setCCode(code);
-		socketRef.current?.emit("cCodeChange", { code });
-		localStorage.setItem("c-code", code);
-	};
-
-	const handleCppCodeChange = (newValue?: string) => {
-		const code = newValue ?? "";
-		setCppCode(code);
-		socketRef.current?.emit("cppCodeChange", { code });
-		localStorage.setItem("cpp-code", code);
-	};
-
-	const handlePyCodeChange = (newValue?: string) => {
-		const code = newValue ?? "";
-		setPyCode(code);
-		localStorage.setItem("py-code", code);
-		socketRef.current?.emit("pyCodeChange", { code });
-	};
-
-	const handleJavaCodeChange = (newValue?: string) => {
-		const code = newValue ?? "";
-		setJavaCode(code);
-		socketRef.current?.emit("javaCodeChange", { code });
-		localStorage.setItem("java-code", code);
-	};
+	}, [roomId]);
 
 	const answerCall = async () => {
 		setCallAccepted(true);
 
 		const Peer = (await import("simple-peer")).default;
-		const peer = new Peer({ initiator: false, trickle: false, stream });
+		const peer = new Peer({
+			initiator: false,
+			trickle: false,
+			stream: streamRef.current,
+		});
 
 		peer.on("signal", (data) => {
-			socketRef.current?.emit("answerCall", { signal: data, to: call.from });
+			socketRef.current?.emit("answerCall", { signal: data });
 		});
 
 		peer.on("stream", (currentStream) => {
@@ -214,18 +197,24 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
 			}
 		});
 
-		peer.signal(call.signal as Signal);
+		const incomingSignal = callRef.current.signal;
+		if (incomingSignal) {
+			peer.signal(incomingSignal as Signal);
+		}
 
 		connectionRef.current = peer;
 	};
 
-	const callUser = async (id: string) => {
+	const callUser = async () => {
 		const Peer = (await import("simple-peer")).default;
-		const peer = new Peer({ initiator: true, trickle: false, stream });
+		const peer = new Peer({
+			initiator: true,
+			trickle: false,
+			stream: streamRef.current,
+		});
 
 		peer.on("signal", (data) => {
 			socketRef.current?.emit("callUser", {
-				userToCall: id,
 				signalData: data,
 				from: me,
 				name,
@@ -252,9 +241,19 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
 		window.location.reload();
 	};
 
+	useEffect(() => {
+		callUserRef.current = callUser;
+		answerCallRef.current = answerCall;
+		streamRef.current = stream;
+		callRef.current = call;
+		callAcceptedRef.current = callAccepted;
+		callEndedRef.current = callEnded;
+	});
+
 	return (
 		<SocketContext.Provider
 			value={{
+				roomId: roomId ?? "",
 				call,
 				callAccepted,
 				myVideo,
@@ -273,18 +272,6 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
 				setEditorFontSize,
 				currentWindow,
 				setCurrentWindow,
-				cCode,
-				setCCode,
-				javaCode,
-				setJavaCode,
-				pyCode,
-				setPyCode,
-				cppCode,
-				setCppCode,
-				handleCCodeChange,
-				handleCppCodeChange,
-				handleJavaCodeChange,
-				handlePyCodeChange,
 			}}
 		>
 			{children}

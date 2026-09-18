@@ -1,30 +1,75 @@
 "use client";
 
-import { Editor } from "@monaco-editor/react";
+import "@/lib/monaco";
+import { useCallback, useEffect, useRef } from "react";
+import { Editor, type OnMount } from "@monaco-editor/react";
+import { MonacoBinding } from "y-monaco";
+import type { Awareness } from "y-protocols/awareness";
+import * as Y from "yjs";
 import { useSocket } from "./Context";
 
 type CodeEditorProps = {
 	value?: string;
 	onChange?: (value?: string) => void;
 	language?: string;
+	ytext?: Y.Text;
+	awareness?: Awareness | null;
 };
 
-const CodeEditor = ({ value, onChange, language }: CodeEditorProps) => {
+const CodeEditor = ({
+	value,
+	onChange,
+	language,
+	ytext,
+	awareness,
+}: CodeEditorProps) => {
 	const { editorTheme, editorFontSize } = useSocket();
+	const bindingRef = useRef<MonacoBinding | null>(null);
+	const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
+
+	const ensureBinding = useCallback(() => {
+		const editor = editorRef.current;
+		if (!editor || !ytext || bindingRef.current) return;
+		const model = editor.getModel();
+		if (!model) return;
+		bindingRef.current = new MonacoBinding(
+			ytext,
+			model,
+			new Set([editor]),
+			awareness ?? null
+		);
+	}, [awareness, ytext]);
+
+	useEffect(() => {
+		ensureBinding();
+		return () => {
+			awareness?.setLocalStateField("selection", null);
+			bindingRef.current?.destroy();
+			bindingRef.current = null;
+		};
+	}, [awareness, ensureBinding]);
+
+	const handleMount: OnMount = (editor) => {
+		editorRef.current = editor;
+		ensureBinding();
+	};
+
+	const shared = Boolean(ytext);
 
 	return (
 		<div className="flex h-full p-1 bg-white dark:bg-neutral-900 rounded-b-md">
 			<Editor
 				language={language}
 				theme={editorTheme}
-				value={value}
+				value={shared ? undefined : value}
 				options={{
 					selectOnLineNumbers: true,
 					colorDecorators: true,
 					fontSize: Number(editorFontSize),
 					automaticLayout: true,
 				}}
-				onChange={onChange}
+				onChange={shared ? undefined : onChange}
+				onMount={handleMount}
 				loading={
 					<div className="w-full h-full flex items-center justify-center text-sm font-thin text-neutral-400">
 						Loading editor...

@@ -1,6 +1,9 @@
-import { createServer } from "node:http";
+import { createServer, type IncomingMessage } from "node:http";
+import type { Duplex } from "node:stream";
 import next from "next";
+import { WebSocketServer } from "ws";
 import { Server, type Socket } from "socket.io";
+import { Hocuspocus } from "@hocuspocus/server";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOST ?? (dev ? "localhost" : "0.0.0.0");
@@ -21,27 +24,57 @@ app
 			},
 		});
 
+		const collab = new Hocuspocus({ name: "devmeet" });
+
+		const collabWebSocketServer = new WebSocketServer({ noServer: true });
+
+		server.on("upgrade", (request: IncomingMessage, socket: Duplex, head: Buffer) => {
+			const { pathname } = new URL(request.url ?? "/", "http://localhost");
+
+			if (pathname === "/collab") {
+				collabWebSocketServer.handleUpgrade(request, socket, head, (ws) => {
+					collabWebSocketServer.emit("connection", ws, request);
+				});
+			} else if (pathname.startsWith("/_next/")) {
+				// Forward dev-mode HMR websockets to Next.js. A server-websocket
+				// with a `path` option would reject every other upgrade with 400.
+				app.getUpgradeHandler()(request, socket, head);
+			}
+			// /socket.io upgrades are handled by socket.io's own listener.
+		});
+
+		collabWebSocketServer.on("connection", (socket, request) => {
+			collab.handleConnection(socket, request);
+		});
+
 		io.on("connection", (socket: Socket) => {
 			socket.emit("me", socket.id);
 
-			socket.on("disconnect", () => {
-				socket.broadcast.emit("callEnded");
+			socket.on("join-room", (room: string) => {
+				socket.data.room = room;
+				socket.join(room);
+				socket.broadcast.to(room).emit("user-joined", { id: socket.id });
 			});
 
-			const relay = (event: string) => {
-				socket.on(event, (data: unknown) => socket.broadcast.emit(event, data));
-			};
+			socket.on("disconnect", () => {
+				const room = socket.data.room as string | undefined;
+				if (room) {
+					socket.to(room).emit("callEnded");
+				}
+			});
 
-			for (const event of ["cCodeChange", "cppCodeChange", "pyCodeChange", "javaCodeChange"]) {
-				relay(event);
-			}
-
-			socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-				io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+			socket.on("callUser", ({ signalData, from, name }) => {
+				const room = socket.data.room as string | undefined;
+				if (room) {
+					socket.to(room).emit("callUser", { signal: signalData, from, name });
+				}
 			});
 
 			socket.on("answerCall", (data) => {
-				io.to(data.to).emit("callAccepted", data.signal);
+				const room = socket.data.room as string | undefined;
+				if (room) {
+					socket.to(room).emit("callAccepted", data.signal);
+				}
 			});
 		});
 

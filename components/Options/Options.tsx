@@ -7,17 +7,20 @@ import { useSocket } from "../Context";
 
 const Options = () => {
 	const {
-		me,
 		name,
 		setName,
 		callAccepted,
 		leaveCall,
-		callUser,
 		callEnded,
 		currentWindow,
 	} = useSocket();
 
-	const [idToCall, setIdToCall] = useState("");
+	const [copied, setCopied] = useState(false);
+
+	const handleCopy = () => {
+		setCopied(true);
+		setTimeout(() => setCopied(false), 2000);
+	};
 
 	return (
 		<div
@@ -40,17 +43,17 @@ const Options = () => {
 					placeholder="Name"
 				/>
 				<div className="p-2 dark:bg-neutral-900 bg-white rounded-r-md">
-					<CopyToClipboard text={me}>
+					<CopyToClipboard
+						text={typeof window !== "undefined" ? window.location.href : ""}
+						onCopy={handleCopy}
+					>
 						<button
-							className="bg-purple-400 rounded-md h-10 w-10 p-2"
-							title="Copy Meet ID"
+							className={`rounded-md h-10 w-10 p-2 ${
+								copied ? "bg-green-400" : "bg-purple-400"
+							}`}
+							title={copied ? "Link copied!" : "Copy invite link to share"}
 						>
-							<Image
-								width={24}
-								height={24}
-								src="/copy.svg"
-								alt="Copy ID"
-							/>
+							<Image width={24} height={24} src="/copy.svg" alt="Copy invite link" />
 						</button>
 					</CopyToClipboard>
 				</div>
@@ -60,48 +63,18 @@ const Options = () => {
 					currentWindow === "meet" ? "w-full md:w-1/2" : "mt-2"
 				}`}
 			>
-				<input
-					className="w-full dark:bg-neutral-900 focus:outline-none rounded-l-md p-4 border-0 font-thin"
-					type="text"
-					value={idToCall}
-					onChange={(e) => setIdToCall(e.target.value)}
-					placeholder="ID to Call"
-				/>
-				<div className="p-2 dark:bg-neutral-900 bg-white rounded-r-md">
-					{callAccepted && !callEnded ? (
-						<button
-							onClick={leaveCall}
-							className="bg-red-400 rounded-md h-10 w-10 p-2"
-							title="Hang Up"
-						>
-							<Image
-								width={24}
-								height={24}
-								src="/cut.svg"
-								alt="Hang Up"
-							/>
-						</button>
-					) : (
-						<>
-							{idToCall ? (
-								<button
-									onClick={() => callUser(idToCall)}
-									className="bg-green-400 rounded-md h-10 w-10 p-2"
-									title="Call"
-								>
-									<Image
-										width={24}
-										height={24}
-										src="/call.svg"
-										alt="Call"
-									/>
-								</button>
-							) : (
-								<div className="h-10 w-10"></div>
-							)}
-						</>
-					)}
-				</div>
+				{callAccepted && !callEnded ? (
+					<button
+						onClick={leaveCall}
+						className="bg-red-400 rounded-md h-10 w-10 p-2"
+						title="Hang Up"
+					>
+						<Image width={24} height={24} src="/cut.svg" alt="Hang Up" />
+					</button>
+				) : null}
+				<span className="font-thin text-sm ml-2 text-neutral-500">
+					Share the invite link with the other person to connect.
+				</span>
 			</div>
 		</div>
 	);
