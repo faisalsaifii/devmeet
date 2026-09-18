@@ -23,9 +23,8 @@ Became tired of companies still using zoom or google meet to take coding intervi
 Frontend
 
 ```bash
-cd frontend
-npm i
-npm start
+pnpm i
+pnpm run dev
 ```
 
 Backend
