@@ -4,7 +4,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    healthCheckPath: /
+    healthCheckPath: /api/health
     buildCommand: pnpm install --frozen-lockfile && pnpm build
     startCommand: pnpm start
     envVars:
