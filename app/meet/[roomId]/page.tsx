@@ -15,8 +15,10 @@ export default async function MeetRoomPage({
   const { roomId } = await params;
 
   return (
-    <ContextProvider roomId={roomId}>
-      <MeetShell />
-    </ContextProvider>
+    <div className="meet-app h-full">
+      <ContextProvider roomId={roomId}>
+        <MeetShell />
+      </ContextProvider>
+    </div>
   );
 }
