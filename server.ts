@@ -73,7 +73,7 @@ app
 			socket.on("disconnect", () => {
 				const room = socket.data.room as string | undefined;
 				if (room) {
-					socket.to(room).emit("callEnded");
+					socket.to(room).emit("user-left");
 				}
 			});
 

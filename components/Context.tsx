@@ -172,6 +172,14 @@ const ContextProvider = ({
 			connectionRef.current?.signal(data.signal);
 		});
 
+		socket.on("user-left", () => {
+			callAcceptedRef.current = false;
+			setCallAccepted(false);
+			setCall({});
+			connectionRef.current?.destroy();
+			connectionRef.current = null;
+		});
+
 		socket.on("callEnded", () => {
 			setCallEnded(true);
 			setRoomEnded(true);
