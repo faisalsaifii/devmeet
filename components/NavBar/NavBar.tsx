@@ -16,7 +16,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 	const { currentWindow, setCurrentWindow } = useSocket();
 
 	return (
-		<nav className="absolute top-0 w-full h-18 flex items-center p-2 justify-between">
+		<nav className="absolute top-0 z-50 w-full h-18 flex items-center p-2 justify-between">
 			<Link href="/">
 				<Image
 					className="h-10 w-10 rounded-full"

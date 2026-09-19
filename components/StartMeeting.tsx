@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getStoredName, storeName } from "@/lib/name";
+import { confirmName, getStoredName, storeName } from "@/lib/name";
 
 const StartMeeting = ({ autoOpen = false }: { autoOpen?: boolean }) => {
 	const [open, setOpen] = useState(false);
@@ -28,6 +28,7 @@ const StartMeeting = ({ autoOpen = false }: { autoOpen?: boolean }) => {
 
 	const createMeeting = () => {
 		storeName(name);
+		confirmName();
 		router.push(`/meet/${crypto.randomUUID()}`);
 	};
 

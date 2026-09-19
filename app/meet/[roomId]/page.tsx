@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import MeetShell from "@/components/MeetShell";
+import NameGate from "@/components/NameGate";
 import { ContextProvider } from "@/components/Context";
 import { isRoomClosed } from "@/lib/rooms";
 
@@ -18,9 +19,11 @@ export default async function MeetRoomPage({
 
   return (
     <div className="meet-app h-full">
-      <ContextProvider roomId={roomId} initialRoomEnded={roomClosed}>
-        <MeetShell />
-      </ContextProvider>
+      <NameGate>
+        <ContextProvider roomId={roomId} initialRoomEnded={roomClosed}>
+          <MeetShell />
+        </ContextProvider>
+      </NameGate>
     </div>
   );
 }

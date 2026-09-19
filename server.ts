@@ -87,7 +87,10 @@ app
 			socket.on("answerCall", (data) => {
 				const room = socket.data.room as string | undefined;
 				if (room) {
-					socket.to(room).emit("callAccepted", data.signal);
+					socket.to(room).emit("callAccepted", {
+						signal: data.signal,
+						name: data.name,
+					});
 				}
 			});
 

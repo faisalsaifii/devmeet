@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import VideoPlayer from "./VideoPlayer/VideoPlayer";
+import LoadingScreen from "./LoadingScreen";
 import Notifications from "./Notification/Notifications";
 import Options from "./Options/Options";
 import Compiler from "./Compiler/Compiler";
@@ -19,7 +20,7 @@ import {
 import { useDefaultLayout } from "react-resizable-panels";
 
 function Meet() {
-	const { currentWindow, roomEnded } = useSocket();
+	const { currentWindow, roomEnded, connecting } = useSocket();
 	const [showInfo, setShowInfo] = useState(false);
 	const { defaultLayout, onLayoutChanged } = useDefaultLayout({
 		id: "meet-video-code-split",
@@ -42,11 +43,15 @@ function Meet() {
 		);
 	}
 
+	if (connecting) {
+		return <LoadingScreen />;
+	}
+
 	return (
 		<>
 			{showInfo && <Info setShowInfo={setShowInfo} />}
 			<NavBar setShowInfo={setShowInfo} />
-			<div className="flex h-full pt-14">
+			<div className="animate-fade-in flex h-full pt-14">
 				{currentWindow === "both" ? (
 					<ResizablePanelGroup
 						orientation="horizontal"

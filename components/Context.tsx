@@ -30,6 +30,8 @@ type SocketContextValue = {
 	myVideo: RefObject<HTMLVideoElement | null>;
 	userVideo: RefObject<HTMLVideoElement | null>;
 	stream?: MediaStream;
+	remoteStream?: MediaStream;
+	connecting: boolean;
 	name: string;
 	setName: (name: string) => void;
 	callEnded: boolean;
@@ -77,6 +79,8 @@ const ContextProvider = ({
 	const [callAccepted, setCallAccepted] = useState(false);
 	const [callEnded, setCallEnded] = useState(false);
 	const [stream, setStream] = useState<MediaStream>();
+	const [remoteStream, setRemoteStream] = useState<MediaStream>();
+	const [connectionGraceElapsed, setConnectionGraceElapsed] = useState(false);
 	const [name, setName] = useState(() => getStoredName());
 	const [call, setCall] = useState<Call>({});
 	const [me, setMe] = useState("");
@@ -149,10 +153,20 @@ const ContextProvider = ({
 			}
 		);
 
-		socket.on("callAccepted", (signal: Signal) => {
-			setCallAccepted(true);
-			connectionRef.current?.signal(signal);
-		});
+		socket.on(
+			"callAccepted",
+			(payload: { signal?: Signal; name?: string } | Signal) => {
+				setCallAccepted(true);
+				const data = payload as { signal?: Signal; name?: string } | null;
+				if (data?.name) {
+					setCall((prev) => ({ ...prev, name: data.name }));
+				}
+				const signal = data?.signal ?? (payload as Signal);
+				if (signal) {
+					connectionRef.current?.signal(signal);
+				}
+			}
+		);
 
 		socket.on("renegotiate", (data: { signal: Signal }) => {
 			connectionRef.current?.signal(data.signal);
@@ -239,13 +253,14 @@ const ContextProvider = ({
 		peer.on("signal", (data) => {
 			if (initialSignal) {
 				initialSignal = false;
-				socketRef.current?.emit("answerCall", { signal: data });
+				socketRef.current?.emit("answerCall", { signal: data, name });
 			} else {
 				socketRef.current?.emit("renegotiate", { signal: data });
 			}
 		});
 
 		peer.on("stream", (currentStream) => {
+			setRemoteStream(currentStream);
 			if (userVideoRef.current) {
 				userVideoRef.current.srcObject = currentStream;
 			}
@@ -282,6 +297,7 @@ const ContextProvider = ({
 		});
 
 		peer.on("stream", (currentStream) => {
+			setRemoteStream(currentStream);
 			if (userVideoRef.current) {
 				userVideoRef.current.srcObject = currentStream;
 			}
@@ -368,6 +384,21 @@ const ContextProvider = ({
 		callEndedRef.current = callEnded;
 	});
 
+	/* Reveal the meet UI if the peer never shows up (e.g. waiting alone in a room). */
+	useEffect(() => {
+		if (callEnded || roomEnded || (stream && remoteStream)) {
+			return;
+		}
+		const timer = setTimeout(() => setConnectionGraceElapsed(true), 8000);
+		return () => clearTimeout(timer);
+	}, [callEnded, roomEnded, stream, remoteStream]);
+
+	const connecting =
+		!callEnded &&
+		!roomEnded &&
+		!connectionGraceElapsed &&
+		!(stream && remoteStream);
+
 	return (
 		<SocketContext.Provider
 			value={{
@@ -377,6 +408,8 @@ const ContextProvider = ({
 				myVideo: myVideoRef,
 				userVideo: userVideoRef,
 				stream,
+				remoteStream,
+				connecting,
 				name,
 				setName,
 				callEnded,
