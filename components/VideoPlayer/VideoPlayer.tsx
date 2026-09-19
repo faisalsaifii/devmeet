@@ -2,7 +2,7 @@
 
 import { useSocket } from "../Context";
 import { Badge } from "@/components/ui/badge";
-import { VideoOff } from "lucide-react";
+import { MicOff, VideoOff } from "lucide-react";
 
 const VideoPlayer = () => {
   const {
@@ -15,6 +15,8 @@ const VideoPlayer = () => {
     call,
     currentWindow,
     cameraEnabled,
+    remoteCameraEnabled,
+    remoteMicEnabled,
   } = useSocket();
 
   const horizontal = currentWindow === "meet";
@@ -33,12 +35,26 @@ const VideoPlayer = () => {
             horizontal ? "mb-2 md:mb-0 md:mr-2 md:w-1/2" : "mb-2"
           }`}
         >
-          <video
-            playsInline
-            ref={userVideoRef}
-            autoPlay
-            className="h-full w-full overflow-hidden object-cover"
-          />
+          {remoteCameraEnabled ? (
+            <video
+              playsInline
+              ref={userVideoRef}
+              autoPlay
+              className="h-full w-full overflow-hidden object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2">
+              <VideoOff className="size-10 text-muted-foreground" />
+              <Badge className="border-0 bg-transparent font-thin text-sm text-muted-foreground">
+                Camera is off
+              </Badge>
+            </div>
+          )}
+          {!remoteMicEnabled && (
+            <Badge className="absolute bottom-1 left-1 flex h-auto w-auto items-center gap-1 rounded-md border-0 bg-black/50 px-2 py-0.5 text-xs font-black text-white">
+              <MicOff className="size-3" />
+            </Badge>
+          )}
           <Badge className="absolute right-1 bottom-1 flex h-auto w-auto items-center rounded-md border-0 bg-black/50 px-2 py-0.5 text-xs font-black text-white">
             {call.name || "Someone"}
           </Badge>

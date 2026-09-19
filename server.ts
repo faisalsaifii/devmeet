@@ -100,6 +100,13 @@ app
 					socket.to(room).emit("renegotiate", data);
 				}
 			});
+
+			socket.on("media-state", (data) => {
+				const room = socket.data.room as string | undefined;
+				if (room) {
+					socket.to(room).emit("media-state", data);
+				}
+			});
 		});
 
 		server.listen(port, hostname, () => {

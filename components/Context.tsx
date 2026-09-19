@@ -40,6 +40,8 @@ type SocketContextValue = {
 	toggleMic: () => void;
 	cameraEnabled: boolean;
 	toggleCamera: () => void;
+	remoteMicEnabled: boolean;
+	remoteCameraEnabled: boolean;
 	me: string;
 	callUser: () => void;
 	leaveCall: () => void;
@@ -90,6 +92,8 @@ const ContextProvider = ({
 	const [hydrated, setHydrated] = useState(false);
 	const [micEnabled, setMicEnabled] = useState(true);
 	const [cameraEnabled, setCameraEnabled] = useState(true);
+	const [remoteMicEnabled, setRemoteMicEnabled] = useState(true);
+	const [remoteCameraEnabled, setRemoteCameraEnabled] = useState(true);
 	const [roomEnded, setRoomEnded] = useState(initialRoomEnded);
 
 	const myVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -104,6 +108,15 @@ const ContextProvider = ({
 	const callEndedRef = useRef(false);
 	const micEnabledRef = useRef(true);
 	const cameraEnabledRef = useRef(true);
+	const meRef = useRef("");
+
+	const broadcastMediaState = () => {
+		socketRef.current?.emit("media-state", {
+			from: meRef.current,
+			micEnabled: micEnabledRef.current,
+			cameraEnabled: cameraEnabledRef.current,
+		});
+	};
 
 	/* eslint-disable react-hooks/set-state-in-effect -- hydrate persisted state on the client only */
 	useEffect(() => {
@@ -125,9 +138,13 @@ const ContextProvider = ({
 		const socket = io();
 		socketRef.current = socket;
 
-		socket.on("me", (id: string) => setMe(id));
+		socket.on("me", (id: string) => {
+			meRef.current = id;
+			setMe(id);
+		});
 
 		socket.on("user-joined", () => {
+			broadcastMediaState();
 			if (callAcceptedRef.current || callEndedRef.current) {
 				return;
 			}
@@ -176,9 +193,25 @@ const ContextProvider = ({
 			callAcceptedRef.current = false;
 			setCallAccepted(false);
 			setCall({});
+			setRemoteMicEnabled(true);
+			setRemoteCameraEnabled(true);
 			connectionRef.current?.destroy();
 			connectionRef.current = null;
 		});
+
+		socket.on(
+			"media-state",
+			({
+				micEnabled: remoteMic,
+				cameraEnabled: remoteCamera,
+			}: {
+				micEnabled: boolean;
+				cameraEnabled: boolean;
+			}) => {
+				setRemoteMicEnabled(remoteMic);
+				setRemoteCameraEnabled(remoteCamera);
+			}
+		);
 
 		socket.on("callEnded", () => {
 			setCallEnded(true);
@@ -194,6 +227,7 @@ const ContextProvider = ({
 
 		if (roomId) {
 			socket.emit("join-room", roomId);
+			broadcastMediaState();
 		}
 
 		return () => {
@@ -338,6 +372,7 @@ const ContextProvider = ({
 				?.getAudioTracks()
 				.forEach((track) => (track.enabled = false));
 		}
+		broadcastMediaState();
 	};
 
 	const toggleCamera = () => {
@@ -356,6 +391,7 @@ const ContextProvider = ({
 				?.getVideoTracks()
 				.forEach((track) => (track.enabled = false));
 		}
+		broadcastMediaState();
 	};
 
 	/* eslint-disable react-hooks/exhaustive-deps -- media init should run once per room */
@@ -374,6 +410,9 @@ const ContextProvider = ({
 				setMicEnabled(false);
 				setCameraEnabled(false);
 			}
+			if (!cancelled) {
+				broadcastMediaState();
+			}
 		};
 
 		init();
@@ -390,6 +429,7 @@ const ContextProvider = ({
 		callRef.current = call;
 		callAcceptedRef.current = callAccepted;
 		callEndedRef.current = callEnded;
+		meRef.current = me;
 	});
 
 	/* Reveal the meet UI if the peer never shows up (e.g. waiting alone in a room). */
@@ -426,6 +466,8 @@ const ContextProvider = ({
 				toggleMic,
 				cameraEnabled,
 				toggleCamera,
+				remoteMicEnabled,
+				remoteCameraEnabled,
 				me,
 				callUser,
 				leaveCall,
