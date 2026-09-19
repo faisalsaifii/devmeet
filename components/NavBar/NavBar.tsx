@@ -78,7 +78,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 					size="icon"
 					title="Info"
 					onClick={() => setShowInfo(true)}
-					className="m-1 size-6 rounded-full bg-purple-400 text-white hover:bg-purple-400/80"
+					className="m-1 size-6 rounded-full bg-white/15 text-white hover:bg-white/25"
 				>
 					<Image
 						className="h-full w-auto"

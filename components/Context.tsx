@@ -13,6 +13,7 @@ import { io, type Socket } from "socket.io-client";
 import type { Instance as PeerInstance } from "simple-peer";
 
 type Signal = Parameters<PeerInstance["signal"]>[0];
+type MediaKind = "audio" | "video";
 
 type Call = {
 	isReceivingCall?: boolean;
@@ -31,6 +32,11 @@ type SocketContextValue = {
 	name: string;
 	setName: (name: string) => void;
 	callEnded: boolean;
+	roomEnded: boolean;
+	micEnabled: boolean;
+	toggleMic: () => void;
+	cameraEnabled: boolean;
+	toggleCamera: () => void;
 	me: string;
 	callUser: () => void;
 	leaveCall: () => void;
@@ -61,9 +67,11 @@ const getStoredValue = (key: string, fallback: string) => {
 const ContextProvider = ({
 	children,
 	roomId,
+	initialRoomEnded = false,
 }: {
 	children: ReactNode;
 	roomId?: string;
+	initialRoomEnded?: boolean;
 }) => {
 	const [callAccepted, setCallAccepted] = useState(false);
 	const [callEnded, setCallEnded] = useState(false);
@@ -75,9 +83,12 @@ const ContextProvider = ({
 	const [editorFontSize, setEditorFontSize] = useState<string | number>(18);
 	const [currentWindow, setCurrentWindow] = useState("both");
 	const [hydrated, setHydrated] = useState(false);
+	const [micEnabled, setMicEnabled] = useState(false);
+	const [cameraEnabled, setCameraEnabled] = useState(false);
+	const [roomEnded, setRoomEnded] = useState(initialRoomEnded);
 
-	const myVideo = useRef<HTMLVideoElement | null>(null);
-	const userVideo = useRef<HTMLVideoElement | null>(null);
+	const myVideoRef = useRef<HTMLVideoElement | null>(null);
+	const userVideoRef = useRef<HTMLVideoElement | null>(null);
 	const connectionRef = useRef<PeerInstance | null>(null);
 	const socketRef = useRef<Socket | null>(null);
 	const callUserRef = useRef<() => void>(() => {});
@@ -86,8 +97,8 @@ const ContextProvider = ({
 	const callRef = useRef<Call>({});
 	const callAcceptedRef = useRef(false);
 	const callEndedRef = useRef(false);
-	const pendingCallRef = useRef(false);
-	const pendingAnswerRef = useRef(false);
+	const micEnabledRef = useRef(false);
+	const cameraEnabledRef = useRef(false);
 
 	/* eslint-disable react-hooks/set-state-in-effect -- hydrate persisted state on the client only */
 	useEffect(() => {
@@ -109,39 +120,13 @@ const ContextProvider = ({
 		const socket = io();
 		socketRef.current = socket;
 
-		let localStream: MediaStream | undefined;
-
-		navigator.mediaDevices
-			.getUserMedia({ video: true, audio: true })
-			.then((currentStream) => {
-				localStream = currentStream;
-				streamRef.current = currentStream;
-				setStream(currentStream);
-				if (myVideo.current) {
-					myVideo.current.srcObject = currentStream;
-				}
-				if (pendingCallRef.current) {
-					pendingCallRef.current = false;
-					callUserRef.current();
-				}
-				if (pendingAnswerRef.current) {
-					pendingAnswerRef.current = false;
-					answerCallRef.current();
-				}
-			})
-			.catch((err) => console.log(err));
-
 		socket.on("me", (id: string) => setMe(id));
 
 		socket.on("user-joined", () => {
 			if (callAcceptedRef.current || callEndedRef.current) {
 				return;
 			}
-			if (streamRef.current) {
-				callUserRef.current();
-			} else {
-				pendingCallRef.current = true;
-			}
+			callUserRef.current();
 		});
 
 		socket.on(
@@ -159,13 +144,30 @@ const ContextProvider = ({
 				if (callAcceptedRef.current || callEndedRef.current) {
 					return;
 				}
-				if (streamRef.current) {
-					answerCallRef.current();
-				} else {
-					pendingAnswerRef.current = true;
-				}
+				answerCallRef.current();
 			}
 		);
+
+		socket.on("callAccepted", (signal: Signal) => {
+			setCallAccepted(true);
+			connectionRef.current?.signal(signal);
+		});
+
+		socket.on("renegotiate", (data: { signal: Signal }) => {
+			connectionRef.current?.signal(data.signal);
+		});
+
+		socket.on("callEnded", () => {
+			setCallEnded(true);
+			setRoomEnded(true);
+			connectionRef.current?.destroy();
+		});
+
+		socket.on("roomClosed", () => {
+			setRoomEnded(true);
+			connectionRef.current?.destroy();
+			streamRef.current?.getTracks().forEach((track) => track.stop());
+		});
 
 		if (roomId) {
 			socket.emit("join-room", roomId);
@@ -173,9 +175,54 @@ const ContextProvider = ({
 
 		return () => {
 			socket.disconnect();
-			localStream?.getTracks().forEach((track) => track.stop());
+			connectionRef.current?.destroy();
+			streamRef.current?.getTracks().forEach((track) => track.stop());
 		};
 	}, [roomId]);
+
+	const attachStream = (currentStream: MediaStream) => {
+		streamRef.current = currentStream;
+		setStream(currentStream);
+		if (myVideoRef.current) {
+			myVideoRef.current.srcObject = currentStream;
+		}
+		currentStream
+			.getAudioTracks()
+			.forEach((track) => (track.enabled = micEnabledRef.current));
+		currentStream
+			.getVideoTracks()
+			.forEach((track) => (track.enabled = cameraEnabledRef.current));
+		const peer = connectionRef.current;
+		if (peer) {
+			currentStream.getTracks().forEach((track) => {
+				try {
+					peer.addTrack(track, currentStream);
+				} catch {
+					// Track is already attached to the peer connection.
+				}
+			});
+		}
+	};
+
+	const ensureMediaTrack = async (kind: MediaKind) => {
+		const currentStream = streamRef.current ?? new MediaStream();
+		streamRef.current = currentStream;
+
+		const hasTrack =
+			kind === "audio"
+				? currentStream.getAudioTracks().length > 0
+				: currentStream.getVideoTracks().length > 0;
+
+		if (!hasTrack) {
+			const acquired = await navigator.mediaDevices.getUserMedia(
+				kind === "audio" ? { audio: true } : { video: true }
+			);
+			acquired.getTracks().forEach((track) => currentStream.addTrack(track));
+		}
+
+		attachStream(currentStream);
+		return currentStream;
+	};
 
 	const answerCall = async () => {
 		setCallAccepted(true);
@@ -186,14 +233,20 @@ const ContextProvider = ({
 			trickle: false,
 			stream: streamRef.current,
 		});
+		let initialSignal = true;
 
 		peer.on("signal", (data) => {
-			socketRef.current?.emit("answerCall", { signal: data });
+			if (initialSignal) {
+				initialSignal = false;
+				socketRef.current?.emit("answerCall", { signal: data });
+			} else {
+				socketRef.current?.emit("renegotiate", { signal: data });
+			}
 		});
 
 		peer.on("stream", (currentStream) => {
-			if (userVideo.current) {
-				userVideo.current.srcObject = currentStream;
+			if (userVideoRef.current) {
+				userVideoRef.current.srcObject = currentStream;
 			}
 		});
 
@@ -212,39 +265,77 @@ const ContextProvider = ({
 			trickle: false,
 			stream: streamRef.current,
 		});
+		let initialSignal = true;
 
 		peer.on("signal", (data) => {
-			socketRef.current?.emit("callUser", {
-				signalData: data,
-				from: me,
-				name,
-			});
-		});
-
-		peer.on("stream", (currentStream) => {
-			if (userVideo.current) {
-				userVideo.current.srcObject = currentStream;
+			if (initialSignal) {
+				initialSignal = false;
+				socketRef.current?.emit("callUser", {
+					signalData: data,
+					from: me,
+					name,
+				});
+			} else {
+				socketRef.current?.emit("renegotiate", { signal: data });
 			}
 		});
 
-		socketRef.current?.on("callAccepted", (signal: Signal) => {
-			setCallAccepted(true);
-			peer.signal(signal);
+		peer.on("stream", (currentStream) => {
+			if (userVideoRef.current) {
+				userVideoRef.current.srcObject = currentStream;
+			}
 		});
 
 		connectionRef.current = peer;
 	};
 
 	const leaveCall = () => {
+		socketRef.current?.emit("hang-up");
 		setCallEnded(true);
+		setRoomEnded(true);
 		connectionRef.current?.destroy();
-		window.location.reload();
+		streamRef.current?.getTracks().forEach((track) => track.stop());
+	};
+
+	const toggleMic = () => {
+		const next = !micEnabledRef.current;
+		micEnabledRef.current = next;
+		setMicEnabled(next);
+
+		if (next) {
+			ensureMediaTrack("audio").catch((err) => {
+				console.log(err);
+				micEnabledRef.current = false;
+				setMicEnabled(false);
+			});
+		} else {
+			streamRef.current
+				?.getAudioTracks()
+				.forEach((track) => (track.enabled = false));
+		}
+	};
+
+	const toggleCamera = () => {
+		const next = !cameraEnabledRef.current;
+		cameraEnabledRef.current = next;
+		setCameraEnabled(next);
+
+		if (next) {
+			ensureMediaTrack("video").catch((err) => {
+				console.log(err);
+				cameraEnabledRef.current = false;
+				setCameraEnabled(false);
+			});
+		} else {
+			streamRef.current
+				?.getVideoTracks()
+				.forEach((track) => (track.enabled = false));
+		}
 	};
 
 	useEffect(() => {
 		callUserRef.current = callUser;
 		answerCallRef.current = answerCall;
-		streamRef.current = stream;
 		callRef.current = call;
 		callAcceptedRef.current = callAccepted;
 		callEndedRef.current = callEnded;
@@ -256,12 +347,17 @@ const ContextProvider = ({
 				roomId: roomId ?? "",
 				call,
 				callAccepted,
-				myVideo,
-				userVideo,
+				myVideo: myVideoRef,
+				userVideo: userVideoRef,
 				stream,
 				name,
 				setName,
 				callEnded,
+				roomEnded,
+				micEnabled,
+				toggleMic,
+				cameraEnabled,
+				toggleCamera,
 				me,
 				callUser,
 				leaveCall,

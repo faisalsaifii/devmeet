@@ -4,6 +4,7 @@ import next from "next";
 import { WebSocketServer } from "ws";
 import { Server, type Socket } from "socket.io";
 import { Hocuspocus } from "@hocuspocus/server";
+import { closeRoom, isRoomClosed } from "./lib/rooms";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOST ?? (dev ? "localhost" : "0.0.0.0");
@@ -51,9 +52,22 @@ app
 			socket.emit("me", socket.id);
 
 			socket.on("join-room", (room: string) => {
+				if (isRoomClosed(room)) {
+					socket.emit("roomClosed");
+					return;
+				}
 				socket.data.room = room;
 				socket.join(room);
 				socket.broadcast.to(room).emit("user-joined", { id: socket.id });
+			});
+
+			socket.on("hang-up", () => {
+				const room = socket.data.room as string | undefined;
+				if (room) {
+					closeRoom(room);
+					socket.to(room).emit("roomClosed");
+					socket.emit("roomClosed");
+				}
 			});
 
 			socket.on("disconnect", () => {
@@ -74,6 +88,13 @@ app
 				const room = socket.data.room as string | undefined;
 				if (room) {
 					socket.to(room).emit("callAccepted", data.signal);
+				}
+			});
+
+			socket.on("renegotiate", (data) => {
+				const room = socket.data.room as string | undefined;
+				if (room) {
+					socket.to(room).emit("renegotiate", data);
 				}
 			});
 		});

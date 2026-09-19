@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import MeetShell from "@/components/MeetShell";
 import { ContextProvider } from "@/components/Context";
+import { isRoomClosed } from "@/lib/rooms";
 
 export const metadata: Metadata = {
   title: "Start a Meeting",
@@ -13,10 +14,11 @@ export default async function MeetRoomPage({
   params: Promise<{ roomId: string }>;
 }) {
   const { roomId } = await params;
+  const roomClosed = isRoomClosed(roomId);
 
   return (
     <div className="meet-app h-full">
-      <ContextProvider roomId={roomId}>
+      <ContextProvider roomId={roomId} initialRoomEnded={roomClosed}>
         <MeetShell />
       </ContextProvider>
     </div>

@@ -9,16 +9,32 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Copy, PhoneOff } from "lucide-react";
+import {
+	Check,
+	Copy,
+	Mic,
+	MicOff,
+	PhoneOff,
+	Video,
+	VideoOff,
+} from "lucide-react";
+
+const controlButton = (enabled: boolean) =>
+	enabled
+		? "bg-white/90 text-neutral-900 shadow-lg shadow-black/20 hover:bg-white"
+		: "bg-rose-500 text-white shadow-lg shadow-rose-950/40 hover:bg-rose-600";
 
 const Options = () => {
 	const {
 		name,
 		setName,
-		callAccepted,
 		leaveCall,
 		callEnded,
-		currentWindow,
+		micEnabled,
+		toggleMic,
+		cameraEnabled,
+		toggleCamera,
+		me,
 	} = useSocket();
 
 	const [copied, setCopied] = useState(false);
@@ -33,27 +49,19 @@ const Options = () => {
 		}
 	};
 
+	const isInCall = !!me && !callEnded;
+
 	return (
-		<div
-			className={`flex w-full ${
-				currentWindow === "meet" ? "p-2 flex-col md:flex-row" : "flex-col"
-			} absolute left-0 bottom-0 z-20`}
-		>
-			<div
-				className={`flex items-center ${
-					currentWindow === "meet"
-						? "w-full md:w-1/2 mb-2 md:mb-0 md:mr-2"
-						: "mt-2"
-				}`}
-			>
-				<Input
-					type="text"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					placeholder="Name"
-					className="h-10 flex-1 rounded-r-none border-0 bg-card font-thin"
-				/>
-				<div className="rounded-r-md bg-card p-2">
+		<div className="absolute bottom-0 left-0 z-20 w-full p-3">
+			<div className="mx-auto flex w-fit max-w-full items-center gap-2 rounded-2xl border border-white/10 bg-black/60 p-2 shadow-2xl shadow-black/50 backdrop-blur-xl">
+				<div className="flex w-full items-center gap-1.5 md:w-auto">
+					<Input
+						type="text"
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						placeholder="Name"
+						className="h-8 w-28 flex-shrink-0 rounded-full border-white/10 bg-white/10 font-thin text-white backdrop-blur-sm placeholder:text-white/40 hover:border-white/20 focus-visible:border-white/30 focus-visible:ring-white/10 md:w-32"
+					/>
 					<Tooltip>
 						<TooltipTrigger
 							render={
@@ -62,44 +70,85 @@ const Options = () => {
 									onClick={handleCopy}
 									className={
 										copied
-											? "bg-green-400 hover:bg-green-400/80"
-											: "bg-purple-400 hover:bg-purple-400/80"
+											? "bg-emerald-500 text-white shadow-lg shadow-emerald-950/40 hover:bg-emerald-600"
+											: "bg-white/15 text-white shadow-lg shadow-black/20 hover:bg-white/25"
 									}
 								/>
 							}
 						>
-							<Copy className="size-4" />
+							{copied ? (
+								<Check className="size-4" />
+							) : (
+								<Copy className="size-4" />
+							)}
 						</TooltipTrigger>
 						<TooltipContent>
-							{copied ? "Link copied!" : "Copy invite link to share"}
+							{copied ? "Copied!" : "Copy invite link"}
 						</TooltipContent>
 					</Tooltip>
 				</div>
-			</div>
-			<div
-				className={`flex items-center ${
-					currentWindow === "meet" ? "w-full md:w-1/2" : "mt-2"
-				}`}
-			>
-				{callAccepted && !callEnded ? (
-					<Tooltip>
-						<TooltipTrigger
-							render={
-								<Button
-									size="icon"
-									onClick={leaveCall}
-									className="bg-red-400 hover:bg-red-400/80"
-								/>
-							}
-						>
-							<PhoneOff className="size-4" />
-						</TooltipTrigger>
-						<TooltipContent>Hang Up</TooltipContent>
-					</Tooltip>
-				) : null}
-				<span className="font-thin text-sm ml-2 text-neutral-500">
-					Share the invite link with the other person to connect.
-				</span>
+
+				{isInCall && (
+					<>
+						<div className="hidden h-6 w-px bg-white/10 md:block" />
+						<div className="flex items-center gap-1.5">
+							<Tooltip>
+								<TooltipTrigger
+									render={
+										<Button
+											size="icon"
+											onClick={toggleMic}
+											className={controlButton(micEnabled)}
+										/>
+									}
+								>
+									{micEnabled ? (
+										<Mic className="size-4" />
+									) : (
+										<MicOff className="size-4" />
+									)}
+								</TooltipTrigger>
+								<TooltipContent>
+									{micEnabled ? "Mute" : "Unmute"}
+								</TooltipContent>
+							</Tooltip>
+							<Tooltip>
+								<TooltipTrigger
+									render={
+										<Button
+											size="icon"
+											onClick={toggleCamera}
+											className={controlButton(cameraEnabled)}
+										/>
+									}
+								>
+									{cameraEnabled ? (
+										<Video className="size-4" />
+									) : (
+										<VideoOff className="size-4" />
+									)}
+								</TooltipTrigger>
+								<TooltipContent>
+									{cameraEnabled ? "Camera off" : "Camera on"}
+								</TooltipContent>
+							</Tooltip>
+							<Tooltip>
+								<TooltipTrigger
+									render={
+										<Button
+											size="icon"
+											onClick={leaveCall}
+											className="bg-rose-500 text-white shadow-lg shadow-rose-950/40 hover:bg-rose-600"
+										/>
+									}
+								>
+									<PhoneOff className="size-4" />
+								</TooltipTrigger>
+								<TooltipContent>Hang up</TooltipContent>
+							</Tooltip>
+						</div>
+					</>
+				)}
 			</div>
 		</div>
 	);

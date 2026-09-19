@@ -2,54 +2,74 @@
 
 import { useSocket } from "../Context";
 import { Badge } from "@/components/ui/badge";
+import { VideoOff } from "lucide-react";
 
 const VideoPlayer = () => {
   const {
     name,
     callAccepted,
-    myVideo,
-    userVideo,
+    myVideo: myVideoRef,
+    userVideo: userVideoRef,
     callEnded,
     stream,
     call,
     currentWindow,
+    cameraEnabled,
   } = useSocket();
+
+  const horizontal = currentWindow === "meet";
 
   return (
     <div
       className={`flex h-full ${
-        currentWindow !== "meet"
-          ? "flex-col"
-          : "flex-col md:flex-row justify-start items-center md:justify-center"
+        horizontal
+          ? "flex-col md:flex-row items-center md:justify-center"
+          : "flex-col"
       }`}
     >
       {callAccepted && !callEnded && (
         <div
-          className={`relative flex items-center justify-center rounded-md bg-muted ${
-            currentWindow === "meet" ? "mb-2 md:mb-0 md:mr-2" : "mb-2"
+          className={`relative flex min-h-0 min-w-0 aspect-video w-full items-center justify-center overflow-hidden rounded-md bg-muted ${
+            horizontal ? "mb-2 md:mb-0 md:mr-2 md:w-1/2" : "mb-2"
           }`}
         >
           <video
             playsInline
-            ref={userVideo}
+            ref={userVideoRef}
             autoPlay
-            className="rounded-md max-h-full max-w-full w-auto h-auto overflow-hidden"
+            className="h-full w-full overflow-hidden object-cover"
           />
-          <Badge className="absolute bottom-1 left-1/2 -translate-x-1/2 border-0 bg-transparent font-black text-muted-foreground">
+          <Badge className="absolute right-1 bottom-1 flex h-auto w-auto items-center rounded-md border-0 bg-black/50 px-2 py-0.5 text-xs font-black text-white">
             {call.name || "Someone"}
           </Badge>
         </div>
       )}
       {stream && (
-        <div className="relative flex items-center justify-center rounded-md bg-muted">
-          <video
-            playsInline
-            muted
-            ref={myVideo}
-            autoPlay
-            className="rounded-md max-h-full max-w-full w-auto h-auto overflow-hidden"
-          />
-          <Badge className="absolute bottom-1 left-1/2 -translate-x-1/2 border-0 bg-transparent font-black text-muted-foreground">
+        <div
+          className={`relative flex aspect-video w-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-md bg-muted ${
+            horizontal ? "md:w-1/2" : ""
+          }`}
+        >
+          {cameraEnabled ? (
+            <video
+              playsInline
+              muted
+              ref={(el) => {
+                myVideoRef.current = el;
+                if (el && stream) el.srcObject = stream;
+              }}
+              autoPlay
+              className="h-full w-full overflow-hidden object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2">
+              <VideoOff className="size-10 text-muted-foreground" />
+              <Badge className="border-0 bg-transparent font-thin text-sm text-muted-foreground">
+                Camera is off
+              </Badge>
+            </div>
+          )}
+          <Badge className="absolute bottom-1 right-1 flex h-auto w-auto items-center rounded-md border-0 bg-black/50 px-2 py-0.5 text-xs font-black text-white">
             {name || "Me"}
           </Badge>
         </div>
