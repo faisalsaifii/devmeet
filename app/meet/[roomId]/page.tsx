@@ -3,20 +3,20 @@ import MeetShell from "@/components/MeetShell";
 import { ContextProvider } from "@/components/Context";
 
 export const metadata: Metadata = {
-	title: "Start a Meeting",
-	description: "Join or start a live coding interview meeting on DevMeet.",
+  title: "Start a Meeting",
+  description: "Join or start a live coding interview meeting on DevMeet.",
 };
 
 export default async function MeetRoomPage({
-	params,
+  params,
 }: {
-	params: Promise<{ roomId: string }>;
+  params: Promise<{ roomId: string }>;
 }) {
-	const { roomId } = await params;
+  const { roomId } = await params;
 
-	return (
-		<ContextProvider roomId={roomId}>
-			<MeetShell />
-		</ContextProvider>
-	);
+  return (
+    <ContextProvider roomId={roomId}>
+      <MeetShell />
+    </ContextProvider>
+  );
 }
