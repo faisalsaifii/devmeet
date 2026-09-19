@@ -60,7 +60,7 @@ function Meet() {
 		<>
 			{showInfo && <Info setShowInfo={setShowInfo} />}
 			<NavBar setShowInfo={setShowInfo} />
-			<div className="animate-fade-in flex h-full pt-14">
+			<div className="animate-fade-in flex h-full overflow-hidden pt-14">
 				{currentWindow === "both" ? (
 					<ResizablePanelGroup
 						orientation="horizontal"

@@ -18,7 +18,7 @@ export default async function MeetRoomPage({
   const roomClosed = isRoomClosed(roomId);
 
   return (
-    <div className="meet-app h-full">
+    <div className="meet-app h-dvh overflow-hidden">
       <NameGate>
         <ContextProvider roomId={roomId} initialRoomEnded={roomClosed}>
           <MeetShell />

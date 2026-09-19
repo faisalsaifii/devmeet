@@ -228,11 +228,11 @@ useEffect(() => {
 				minSize="15"
 				className="pl-1 pr-1"
 			>
-				<div className="flex h-full flex-col p-2 pb-0">
+				<div className="flex h-full flex-col p-2">
 					<Tabs
 						value={currentWindow}
 						onValueChange={setCurrentWindow}
-						className="flex flex-1 flex-col gap-0"
+						className="flex min-h-0 flex-1 flex-col gap-0"
 					>
 						<span className="flex rounded-t-md bg-card py-2 pl-3 text-md">
 							<TabsList className="rounded-md bg-muted p-1 font-thin">
