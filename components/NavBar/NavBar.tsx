@@ -7,6 +7,7 @@ import Github from "../../icons/Github";
 import CopyLink from "../CopyLink";
 import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
+import MeetTimer from "./MeetTimer";
 import {
 	ToggleGroup,
 	ToggleGroupItem,
@@ -17,15 +18,18 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 
 	return (
 		<nav className="absolute top-0 z-50 w-full h-18 flex items-center p-2 justify-between">
-			<Link href="/">
-				<Image
-					className="h-10 w-10 rounded-full"
-					width={40}
-					height={40}
-					src="/img/logo.svg"
-					alt="Logo"
-				/>
-			</Link>
+			<div className="flex items-center gap-3">
+				<Link href="/">
+					<Image
+						className="h-10 w-10 rounded-full"
+						width={40}
+						height={40}
+						src="/img/logo.svg"
+						alt="Logo"
+					/>
+				</Link>
+				<MeetTimer />
+			</div>
 			<ToggleGroup
 				value={[currentWindow]}
 				onValueChange={(values) => {
