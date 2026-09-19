@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSocket } from "../Context";
 import Github from "../../icons/Github";
+import CopyLink from "../CopyLink";
 import { Button } from "@/components/ui/button";
+import { Info } from "lucide-react";
 import {
 	ToggleGroup,
 	ToggleGroupItem,
@@ -52,6 +54,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 				</ToggleGroupItem>
 			</ToggleGroup>
 			<div className="flex items-center">
+				<CopyLink />
 				<Button
 					nativeButton={false}
 					render={
@@ -78,15 +81,9 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 					size="icon"
 					title="Info"
 					onClick={() => setShowInfo(true)}
-					className="m-1 size-6 rounded-full bg-white/15 text-white hover:bg-white/25"
+					className="m-1 size-7 rounded-full bg-white/15 text-white hover:bg-white/25"
 				>
-					<Image
-						className="h-full w-auto"
-						width={24}
-						height={24}
-						src="/img/info.svg"
-						alt="Info"
-					/>
+					<Info className="size-4" />
 				</Button>
 			</div>
 		</nav>

@@ -11,6 +11,7 @@ import {
 } from "react";
 import { io, type Socket } from "socket.io-client";
 import type { Instance as PeerInstance } from "simple-peer";
+import { getStoredName } from "@/lib/name";
 
 type Signal = Parameters<PeerInstance["signal"]>[0];
 type MediaKind = "audio" | "video";
@@ -76,15 +77,15 @@ const ContextProvider = ({
 	const [callAccepted, setCallAccepted] = useState(false);
 	const [callEnded, setCallEnded] = useState(false);
 	const [stream, setStream] = useState<MediaStream>();
-	const [name, setName] = useState("");
+	const [name, setName] = useState(() => getStoredName());
 	const [call, setCall] = useState<Call>({});
 	const [me, setMe] = useState("");
 	const [editorTheme, setEditorTheme] = useState("vs-dark");
 	const [editorFontSize, setEditorFontSize] = useState<string | number>(18);
 	const [currentWindow, setCurrentWindow] = useState("both");
 	const [hydrated, setHydrated] = useState(false);
-	const [micEnabled, setMicEnabled] = useState(false);
-	const [cameraEnabled, setCameraEnabled] = useState(false);
+	const [micEnabled, setMicEnabled] = useState(true);
+	const [cameraEnabled, setCameraEnabled] = useState(true);
 	const [roomEnded, setRoomEnded] = useState(initialRoomEnded);
 
 	const myVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -97,8 +98,8 @@ const ContextProvider = ({
 	const callRef = useRef<Call>({});
 	const callAcceptedRef = useRef(false);
 	const callEndedRef = useRef(false);
-	const micEnabledRef = useRef(false);
-	const cameraEnabledRef = useRef(false);
+	const micEnabledRef = useRef(true);
+	const cameraEnabledRef = useRef(true);
 
 	/* eslint-disable react-hooks/set-state-in-effect -- hydrate persisted state on the client only */
 	useEffect(() => {
@@ -332,6 +333,32 @@ const ContextProvider = ({
 				.forEach((track) => (track.enabled = false));
 		}
 	};
+
+	/* eslint-disable react-hooks/exhaustive-deps -- media init should run once per room */
+	useEffect(() => {
+		let cancelled = false;
+
+		const init = async () => {
+			try {
+				await ensureMediaTrack("audio");
+				if (cancelled) return;
+				await ensureMediaTrack("video");
+			} catch (err) {
+				console.log(err);
+				micEnabledRef.current = false;
+				cameraEnabledRef.current = false;
+				setMicEnabled(false);
+				setCameraEnabled(false);
+			}
+		};
+
+		init();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [roomId]);
+	/* eslint-enable react-hooks/exhaustive-deps */
 
 	useEffect(() => {
 		callUserRef.current = callUser;
