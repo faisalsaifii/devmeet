@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 import {
   motion,
@@ -72,7 +74,9 @@ function CodeFragment() {
         <span className="text-code-str">&quot;a7f2&quot;</span>
         <span className="text-foreground/85">)</span>
       </p>
-      <p className="text-code-com">// both cursors, one buffer</p>
+      <p className="text-code-com">
+        {"// both cursors, one buffer"}
+      </p>
       <p className="text-foreground/70">
         room.<span className="text-code-fn">on</span>(
         <span className="text-code-str">&quot;edit&quot;</span>, sync)

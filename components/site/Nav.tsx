@@ -1,3 +1,7 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   AnimatePresence,
@@ -40,25 +44,39 @@ export function Nav() {
             : "max-w-6xl border border-transparent bg-transparent",
         )}
       >
-        <a href="#top" className="group flex items-center gap-2.5">
-          <img src={"/Logo.svg"} alt="" className="size-7 rounded-full" />
+        <Link href="#top" className="group flex items-center gap-2.5">
+          <Image
+            src="/Logo.svg"
+            alt="DevMeet"
+            width={28}
+            height={28}
+            className="size-7 rounded-full"
+          />
           <span className="font-display text-[1.05rem] font-semibold tracking-tight">
             DevMeet
           </span>
-        </a>
+        </Link>
 
         <ul className="ml-auto hidden items-center gap-7 md:flex">
           {items.map((it) => (
             <li key={it.label}>
-              <a
-                href={it.href}
-                {...(it.href.startsWith("http")
-                  ? { target: "_blank", rel: "noreferrer" }
-                  : {})}
-                className="text-muted-foreground hover:text-foreground relative text-[0.9rem] transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-[image:var(--gradient-violet)] after:transition-transform after:duration-300 hover:after:origin-left hover:after:scale-x-100"
-              >
-                {it.label}
-              </a>
+              {it.href.startsWith("http") ? (
+                <a
+                  href={it.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-muted-foreground hover:text-foreground relative text-[0.9rem] transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-[image:var(--gradient-violet)] after:transition-transform after:duration-300 hover:after:origin-left hover:after:scale-x-100"
+                >
+                  {it.label}
+                </a>
+              ) : (
+                <Link
+                  href={it.href}
+                  className="text-muted-foreground hover:text-foreground relative text-[0.9rem] transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-[image:var(--gradient-violet)] after:transition-transform after:duration-300 hover:after:origin-left hover:after:scale-x-100"
+                >
+                  {it.label}
+                </Link>
+              )}
             </li>
           ))}
         </ul>
@@ -102,16 +120,25 @@ export function Nav() {
             <ul className="flex flex-col gap-5">
               {items.map((it) => (
                 <li key={it.label}>
-                  <a
-                    href={it.href}
-                    onClick={() => setOpen(false)}
-                    {...(it.href.startsWith("http")
-                      ? { target: "_blank", rel: "noreferrer" }
-                      : {})}
-                    className="font-display text-xl tracking-tight"
-                  >
-                    {it.label}
-                  </a>
+                  {it.href.startsWith("http") ? (
+                    <a
+                      href={it.href}
+                      onClick={() => setOpen(false)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-display text-xl tracking-tight"
+                    >
+                      {it.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={it.href}
+                      onClick={() => setOpen(false)}
+                      className="font-display text-xl tracking-tight"
+                    >
+                      {it.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

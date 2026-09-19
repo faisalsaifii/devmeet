@@ -1,3 +1,6 @@
+"use client";
+
+import Link from "next/link";
 import {
   motion,
   useReducedMotion,
@@ -7,13 +10,13 @@ import {
 import type { ReactNode } from "react";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
+import { Arrow, Eyebrow, LINKS, SectionLabel } from "./markup";
 
-export const LINKS = {
-  app: "/meet",
-  github: "https://github.com/faisalsaifii/devmeet",
-};
+export { Arrow, Eyebrow, LINKS, SectionLabel };
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+const MotionLink = motion.create(Link);
 
 type Dir = "up" | "down" | "left" | "right" | "none";
 
@@ -137,9 +140,10 @@ export function MagneticLink({
   const y = useSpring(my, { stiffness: 220, damping: 18, mass: 0.4 });
 
   return (
-    <motion.a
+    <MotionLink
       ref={ref}
       href={href}
+      {...(href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
       {...(reduced ? {} : { style: { x, y } })}
       onMouseMove={(e) => {
         if (reduced || !ref.current) return;
@@ -178,31 +182,6 @@ export function MagneticLink({
       <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
         {children}
       </span>
-    </motion.a>
-  );
-}
-
-export function Arrow({ char = "→" }: { char?: string }) {
-  return (
-    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
-      {char}
-    </span>
-  );
-}
-
-export function Eyebrow({ children }: { children: ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-border px-3.5 py-1.5 text-[0.68rem] font-medium tracking-[0.22em] text-lavender uppercase">
-      <span className="bg-live size-1.5 rounded-full" />
-      {children}
-    </span>
-  );
-}
-
-export function SectionLabel({ children }: { children: ReactNode }) {
-  return (
-    <p className="text-muted-foreground mb-5 font-mono text-[0.7rem] tracking-[0.3em] uppercase">
-      {children}
-    </p>
+    </MotionLink>
   );
 }

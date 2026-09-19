@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Arrow,
   Eyebrow,
@@ -51,42 +53,5 @@ export function FinalCTA() {
         </Reveal>
       </div>
     </section>
-  );
-}
-
-export function Footer() {
-  return (
-    <footer className="border-border relative border-t py-12">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 sm:flex-row">
-        <a href="#top" className="flex items-center gap-2.5">
-          <img src={"/Logo.svg"} alt="" className="size-6 rounded-full" />
-          <span className="font-display text-[0.98rem] font-semibold tracking-tight">
-            DevMeet
-          </span>
-        </a>
-        <p className="text-muted-foreground font-mono text-[0.7rem] tracking-wide sm:ml-4">
-          Technical interviews, in one room.
-        </p>
-        <nav className="text-muted-foreground flex items-center gap-6 text-[0.85rem] sm:ml-auto">
-          <a
-            href="#features"
-            className="hover:text-foreground transition-colors"
-          >
-            Features
-          </a>
-          <a href="#how" className="hover:text-foreground transition-colors">
-            How it works
-          </a>
-          <a
-            href={LINKS.github}
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-foreground transition-colors"
-          >
-            GitHub
-          </a>
-        </nav>
-      </div>
-    </footer>
   );
 }

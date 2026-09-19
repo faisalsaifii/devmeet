@@ -1,9 +1,8 @@
-"use client";
-
 import { Atmosphere } from "@/components/site/Atmosphere";
 import { Experience } from "@/components/site/Experience";
 import { Features } from "@/components/site/Features";
-import { FinalCTA, Footer } from "@/components/site/FinalCTA";
+import { FinalCTA } from "@/components/site/FinalCTA";
+import { Footer } from "@/components/site/Footer";
 import { Hero } from "@/components/site/Hero";
 import { HowItWorks } from "@/components/site/HowItWorks";
 import { Nav } from "@/components/site/Nav";

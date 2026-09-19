@@ -1,20 +1,18 @@
+"use client";
+
 import { motion, useReducedMotion } from "motion/react";
-import { useMemo } from "react";
+
+const particles = Array.from({ length: 22 }, (_, i) => ({
+  left: (i * 37) % 100,
+  top: (i * 53) % 100,
+  d: 9 + (i % 7) * 2.5,
+  s: i % 3 === 0 ? 2 : 1,
+  delay: (i % 5) * 1.3,
+}));
 
 /** Ambient page background: gradients, grid, drifting blobs, particles, grain. */
 export function Atmosphere() {
   const reduced = useReducedMotion();
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 22 }, (_, i) => ({
-        left: (i * 37) % 100,
-        top: (i * 53) % 100,
-        d: 9 + (i % 7) * 2.5,
-        s: i % 3 === 0 ? 2 : 1,
-        delay: (i % 5) * 1.3,
-      })),
-    [],
-  );
 
   return (
     <div

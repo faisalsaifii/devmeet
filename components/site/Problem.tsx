@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
 import { Reveal, SectionLabel, TextReveal } from "./primitives";
