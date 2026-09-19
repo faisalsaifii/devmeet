@@ -4,6 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSocket } from "../Context";
 import Github from "../../icons/Github";
+import { Button } from "@/components/ui/button";
+import {
+	ToggleGroup,
+	ToggleGroupItem,
+} from "@/components/ui/toggle-group";
 
 const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 	const { currentWindow, setCurrentWindow } = useSocket();
@@ -19,47 +24,48 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 					alt="Logo"
 				/>
 			</Link>
-			<div className="rounded-md bg-neutral-200 dark:bg-neutral-900 p-1 font-thin">
-				<button
-					className={`p-1 px-3 rounded-md ${
-						currentWindow === "meet"
-							? "dark:bg-black bg-white"
-							: "dark:bg-neutral-900 bg-neutral-200"
-					}`}
-					onClick={() => setCurrentWindow("meet")}
+			<ToggleGroup
+				value={[currentWindow]}
+				onValueChange={(values) => {
+					const next = values[0];
+					if (next) setCurrentWindow(next);
+				}}
+				className="rounded-md bg-muted p-1 font-thin"
+			>
+				<ToggleGroupItem
+					value="meet"
+					className="rounded-md bg-transparent px-3 aria-pressed:bg-background data-pressed:bg-background"
 				>
 					Meet
-				</button>
-				<button
-					className={`hidden md:inline p-1 px-3 rounded-md ${
-						currentWindow === "both"
-							? "dark:bg-black bg-white"
-							: "dark:bg-neutral-900 bg-neutral-200"
-					}`}
-					onClick={() => setCurrentWindow("both")}
+				</ToggleGroupItem>
+				<ToggleGroupItem
+					value="both"
+					className="hidden rounded-md bg-transparent px-3 aria-pressed:bg-background data-pressed:bg-background md:inline-flex"
 				>
 					Home
-				</button>
-				<button
-					className={`p-1 px-3 rounded-md ${
-						currentWindow === "code"
-							? "dark:bg-black bg-white"
-							: "dark:bg-neutral-900 bg-neutral-200"
-					}`}
-					onClick={() => setCurrentWindow("code")}
+				</ToggleGroupItem>
+				<ToggleGroupItem
+					value="code"
+					className="rounded-md bg-transparent px-3 aria-pressed:bg-background data-pressed:bg-background"
 				>
 					Code
-				</button>
-			</div>
-			<div className="flex">
-				<a
-					href="https://github.com/sponsors/faisalsaifii"
-					target="_blank"
-					rel="noreferrer"
-					className="hidden md:flex p-2 items-center justify-center mx-2 text-xs font-thin rounded-md bg-neutral-200 dark:bg-neutral-800"
+				</ToggleGroupItem>
+			</ToggleGroup>
+			<div className="flex items-center">
+				<Button
+					nativeButton={false}
+					render={
+						<a
+							href="https://github.com/sponsors/faisalsaifii"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					}
+					className="mx-2 hidden items-center justify-center rounded-md p-2 text-xs font-thin md:flex"
+					variant="secondary"
 				>
 					Sponsor
-				</a>
+				</Button>
 				<a
 					href="https://github.com/faisalsaifii/DevMeet"
 					target="_blank"
@@ -68,10 +74,11 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 				>
 					<Github />
 				</a>
-				<button
-					className="m-1 h-6 bg-purple-400 rounded-full"
+				<Button
+					size="icon"
 					title="Info"
 					onClick={() => setShowInfo(true)}
+					className="m-1 size-6 rounded-full bg-purple-400 text-white hover:bg-purple-400/80"
 				>
 					<Image
 						className="h-full w-auto"
@@ -80,7 +87,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 						src="/img/info.svg"
 						alt="Info"
 					/>
-				</button>
+				</Button>
 			</div>
 		</nav>
 	);

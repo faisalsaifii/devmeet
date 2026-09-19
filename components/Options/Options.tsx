@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useSocket } from "../Context";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Copy, PhoneOff } from "lucide-react";
 
 const Options = () => {
 	const {
@@ -17,9 +23,14 @@ const Options = () => {
 
 	const [copied, setCopied] = useState(false);
 
-	const handleCopy = () => {
-		setCopied(true);
-		setTimeout(() => setCopied(false), 2000);
+	const handleCopy = async () => {
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+			setCopied(true);
+			setTimeout(() => setCopied(false), 2000);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	return (
@@ -35,27 +46,34 @@ const Options = () => {
 						: "mt-2"
 				}`}
 			>
-				<input
-					className="w-full dark:bg-neutral-900 focus:outline-none rounded-l-md p-4 border-0 font-thin"
+				<Input
 					type="text"
 					value={name}
 					onChange={(e) => setName(e.target.value)}
 					placeholder="Name"
+					className="h-10 flex-1 rounded-r-none border-0 bg-card font-thin"
 				/>
-				<div className="p-2 dark:bg-neutral-900 bg-white rounded-r-md">
-					<CopyToClipboard
-						text={typeof window !== "undefined" ? window.location.href : ""}
-						onCopy={handleCopy}
-					>
-						<button
-							className={`rounded-md h-10 w-10 p-2 ${
-								copied ? "bg-green-400" : "bg-purple-400"
-							}`}
-							title={copied ? "Link copied!" : "Copy invite link to share"}
+				<div className="rounded-r-md bg-card p-2">
+					<Tooltip>
+						<TooltipTrigger
+							render={
+								<Button
+									size="icon"
+									onClick={handleCopy}
+									className={
+										copied
+											? "bg-green-400 hover:bg-green-400/80"
+											: "bg-purple-400 hover:bg-purple-400/80"
+									}
+								/>
+							}
 						>
-							<Image width={24} height={24} src="/copy.svg" alt="Copy invite link" />
-						</button>
-					</CopyToClipboard>
+							<Copy className="size-4" />
+						</TooltipTrigger>
+						<TooltipContent>
+							{copied ? "Link copied!" : "Copy invite link to share"}
+						</TooltipContent>
+					</Tooltip>
 				</div>
 			</div>
 			<div
@@ -64,13 +82,20 @@ const Options = () => {
 				}`}
 			>
 				{callAccepted && !callEnded ? (
-					<button
-						onClick={leaveCall}
-						className="bg-red-400 rounded-md h-10 w-10 p-2"
-						title="Hang Up"
-					>
-						<Image width={24} height={24} src="/cut.svg" alt="Hang Up" />
-					</button>
+					<Tooltip>
+						<TooltipTrigger
+							render={
+								<Button
+									size="icon"
+									onClick={leaveCall}
+									className="bg-red-400 hover:bg-red-400/80"
+								/>
+							}
+						>
+							<PhoneOff className="size-4" />
+						</TooltipTrigger>
+						<TooltipContent>Hang Up</TooltipContent>
+					</Tooltip>
 				) : null}
 				<span className="font-thin text-sm ml-2 text-neutral-500">
 					Share the invite link with the other person to connect.

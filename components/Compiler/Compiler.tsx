@@ -1,10 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import CodeEditor from "../CodeEditor";
 import { useSocket } from "../Context";
 import { useCodeCollab } from "./useCodeCollab";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Play } from "lucide-react";
 
 const LANGUAGES = {
 	"54": { label: "C++", monaco: "cpp", code: "cpp" },
@@ -88,53 +98,65 @@ const Compiler = () => {
 	return (
 		<>
 			<div className="flex flex-col p-2 pt-0 pb-0 h-4/6">
-				<span className="flex items-center justify-between rounded-t-md bg-white dark:bg-neutral-900 p-2 pl-3 text-md dark:text-neutral-400">
+				<span className="flex items-center justify-between rounded-t-md bg-card p-2 pl-3 text-md">
 					<span className="font-bold">Code</span>
-					<div>
-						<input
+					<div className="flex items-center">
+						<Input
 							value={editorFontSize}
 							onChange={(e) => setEditorFontSize(e.target.value)}
 							title="Font Size"
-							className="dark:bg-neutral-800 rounded-md bg-white font-thin mr-2 text-xs p-2 focus:outline-none w-20 appearance-none"
+							className="mr-2 h-8 w-20 appearance-none bg-card text-xs font-thin"
 							type="number"
 							max={52}
 							min={1}
 						/>
-						<select
+						<Select
 							value={editorTheme}
-							onChange={(e) => setEditorTheme(e.target.value)}
-							title="Theme"
-							className="dark:bg-neutral-800 rounded-md bg-white font-thin mr-2 text-xs p-2 appearance-none"
+							onValueChange={(value) => setEditorTheme(value ?? "light")}
+							items={{ light: "Light", "vs-dark": "Dark" }}
 						>
-							<option value="light">Light</option>
-							<option value="vs-dark">Dark</option>
-						</select>
-						<select
+							<SelectTrigger
+								title="Theme"
+								className="mr-2 h-8 bg-card text-xs font-thin"
+							>
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="light">Light</SelectItem>
+								<SelectItem value="vs-dark">Dark</SelectItem>
+							</SelectContent>
+						</Select>
+						<Select
 							value={languageId}
-							onChange={(e) => setLanguageId(e.target.value)}
-							title="Language"
-							className="dark:bg-neutral-800 rounded-md bg-white font-thin text-xs p-2 appearance-none"
+							onValueChange={(value) => setLanguageId(value ?? "71")}
+							items={Object.fromEntries(
+								Object.entries(LANGUAGES).map(([id, { label }]) => [id, label])
+							)}
 						>
-							{Object.entries(LANGUAGES).map(([id, { label }]) => (
-								<option key={id} value={id}>
-									{label}
-								</option>
-							))}
-						</select>
-						<button
+							<SelectTrigger
+								title="Language"
+								className="h-8 bg-card text-xs font-thin"
+							>
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{Object.entries(LANGUAGES).map(([id, { label }]) => (
+									<SelectItem key={id} value={id}>
+										{label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						<Button
 							type="submit"
-							className="bg-green-400 rounded-md h-7 w-7 p-2 ml-2"
+							className="ml-2 h-7 w-7 bg-green-400 hover:bg-green-400/80"
 							onClick={handleSubmit}
 							title="Run"
 							disabled={isRunning}
+							size="icon"
 						>
-							<Image
-								width={12}
-								height={12}
-								src="/run.svg"
-								alt="Run"
-							/>
-						</button>
+							<Play className="size-4" />
+						</Button>
 					</div>
 				</span>
 				<CodeEditor
@@ -145,40 +167,43 @@ const Compiler = () => {
 				/>
 			</div>
 			<div className="flex flex-col p-2 h-2/6 pb-0">
-				<span className="flex rounded-t-md bg-white dark:bg-neutral-900 p-2 text-md dark:text-neutral-400">
-					<div className="rounded-md bg-neutral-100 dark:bg-black p-1 font-thin">
-						<button
-							className={`p-1 px-3 rounded-md ${
-								currentWindow === "output"
-									? "dark:bg-neutral-900 bg-white"
-									: "dark:bg-black bg-neutral-100"
-							}`}
-							onClick={() => setCurrentWindow("output")}
-						>
-							Output
-						</button>
-						<button
-							className={`p-1 px-3 rounded-md ${
-								currentWindow === "input"
-									? "dark:bg-neutral-900 bg-white"
-									: "dark:bg-black bg-neutral-100"
-							}`}
-							onClick={() => setCurrentWindow("input")}
-						>
-							Input
-						</button>
-					</div>
-				</span>
-				<CodeEditor
-					key={currentWindow}
-					value={currentWindow === "output" ? output : input}
-					onChange={(newValue) =>
-						currentWindow === "output"
-							? setOutput(newValue ?? "")
-							: setInput(newValue ?? "")
-					}
-					language="plaintext"
-				/>
+				<Tabs
+					value={currentWindow}
+					onValueChange={setCurrentWindow}
+					className="flex flex-1 flex-col gap-0"
+				>
+					<span className="flex rounded-t-md bg-card py-2 pl-3 text-md">
+						<TabsList className="rounded-md bg-muted p-1 font-thin">
+							<TabsTrigger
+								value="output"
+								className="data-active:bg-background"
+							>
+								Output
+							</TabsTrigger>
+							<TabsTrigger
+								value="input"
+								className="data-active:bg-background"
+							>
+								Input
+							</TabsTrigger>
+						</TabsList>
+					</span>
+					{currentWindow === "output" ? (
+						<CodeEditor
+							key="output"
+							value={output}
+							onChange={(newValue) => setOutput(newValue ?? "")}
+							language="plaintext"
+						/>
+					) : (
+						<CodeEditor
+							key="input"
+							value={input}
+							onChange={(newValue) => setInput(newValue ?? "")}
+							language="plaintext"
+						/>
+					)}
+				</Tabs>
 			</div>
 		</>
 	);

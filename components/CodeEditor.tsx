@@ -57,7 +57,7 @@ const CodeEditor = ({
 	const shared = Boolean(ytext);
 
 	return (
-		<div className="flex h-full p-1 bg-white dark:bg-neutral-900 rounded-b-md">
+		<div className="flex h-full p-1 bg-card rounded-b-md">
 			<Editor
 				language={language}
 				theme={editorTheme}

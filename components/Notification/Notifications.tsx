@@ -1,6 +1,13 @@
 "use client";
 
 import { useSocket } from "../Context";
+import { Button } from "@/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardFooter,
+} from "@/components/ui/card";
+import { Check, X } from "lucide-react";
 
 const Notifications = () => {
 	const { call, answerCall, callAccepted, leaveCall, callEnded } = useSocket();
@@ -8,29 +15,33 @@ const Notifications = () => {
 	return (
 		<>
 			{call.isReceivingCall && !callAccepted && !callEnded && (
-				<div
-					className="flex flex-col absolute bottom-6 right-6 p-4 rounded-2xl justify-between backdrop-blur-2xl bg-white/50 dark:bg-black/50"
+				<Card
+					className="absolute bottom-6 right-6 w-80 rounded-2xl border-0 bg-card/60 p-4 backdrop-blur-2xl"
 					style={{ zIndex: 100 }}
 				>
-					<span className="pr-20 text-3xl font-thin">
-						{call.name || "Somebody"} has sent an invite
-					</span>
-					<div className="flex justify-end items-center mt-10 text-white">
-						<button
+					<CardContent className="p-0">
+						<p className="pr-20 text-3xl font-thin">
+							{call.name || "Somebody"} has sent an invite
+						</p>
+					</CardContent>
+					<CardFooter className="mt-10 justify-end gap-2 border-0 bg-transparent p-0 text-white">
+						<Button
 							onClick={answerCall}
-							className="p-2 font-bold bg-green-400 rounded-md"
+							className="bg-green-400 font-bold hover:bg-green-400/80"
 						>
+							<Check className="size-4" />
 							Accept
-						</button>
-						<button
+						</Button>
+						<Button
 							title="Close"
-							className="p-2 m-2 font-bold bg-red-500 rounded-md"
 							onClick={leaveCall}
+							className="bg-red-500 font-bold hover:bg-red-500/80"
 						>
+							<X className="size-4" />
 							Decline
-						</button>
-					</div>
-				</div>
+						</Button>
+					</CardFooter>
+				</Card>
 			)}
 		</>
 	);
