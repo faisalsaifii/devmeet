@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CodeEditor from "../CodeEditor";
 import { useSocket } from "../Context";
 import { useCodeCollab } from "./useCodeCollab";
@@ -14,7 +14,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Play } from "lucide-react";
+import { Loader2, Play } from "lucide-react";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -68,39 +68,68 @@ const Compiler = () => {
 		localStorage.setItem("current-io-window", currentWindow);
 	}, [hydrated, languageId, input, output, currentWindow]);
 
-	const getSourceCode = () => {
+	const getSourceCode = useCallback(() => {
 		if (!collab) return "";
 		const key = LANGUAGES[languageId as keyof typeof LANGUAGES]?.code;
 		return collab.doc.getText(key).toString();
-	};
+	}, [collab, languageId]);
 
-	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
+	const handleSubmit = useCallback(async () => {
 		setCurrentWindow("output");
 		setOutput("Loading...");
 		setIsRunning(true);
 		try {
+			const sourceCode = getSourceCode();
+			if (!sourceCode.trim()) {
+				throw new Error("Please write some code before running");
+			}
 			const response = await fetch("/api/compile", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					languageId,
-					sourceCode: getSourceCode(),
+					sourceCode,
 					stdin: input,
 				}),
 			});
 			const data = await response.json();
 			if (!response.ok) {
-				throw new Error(data.error);
+				throw new Error(data.error || "Compilation failed");
 			}
-			setOutput(data.stdout);
+			const deco = (value?: string) => value?.trim() ?? "";
+			const result = [
+				deco(data.compileOutput),
+				deco(data.stdout),
+				deco(data.stderr),
+			]
+				.filter(Boolean)
+				.join("\n");
+			setOutput(result || "(No output)");
 		} catch (error) {
 			console.error(error);
-			setOutput("Something went wrong");
+			setOutput(
+				error instanceof Error ? `Error: ${error.message}` : "Something went wrong"
+			);
 		} finally {
 			setIsRunning(false);
 		}
-	};
+	}, [languageId, input, getSourceCode]);
+
+	const handleSubmitRef = useRef(handleSubmit);
+	useEffect(() => {
+		handleSubmitRef.current = handleSubmit;
+	}, [handleSubmit]);
+
+useEffect(() => {
+		const onKeyDown = (event: KeyboardEvent) => {
+			if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+				event.preventDefault();
+				handleSubmitRef.current();
+			}
+		};
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, []);
 
 	const language = LANGUAGES[languageId as keyof typeof LANGUAGES];
 
@@ -168,16 +197,20 @@ const Compiler = () => {
 									))}
 								</SelectContent>
 							</Select>
-							<Button
-								type="submit"
-								className="ml-2 h-7 w-7 bg-green-400 hover:bg-green-400/80"
-								onClick={handleSubmit}
-								title="Run"
-								disabled={isRunning}
-								size="icon"
-							>
+<Button
+							type="button"
+							className="ml-2 h-7 w-7 bg-green-400 hover:bg-green-400/80"
+							onClick={handleSubmit}
+							title="Run (Ctrl+Enter)"
+							disabled={isRunning}
+							size="icon"
+						>
+							{isRunning ? (
+								<Loader2 className="size-4 animate-spin" />
+							) : (
 								<Play className="size-4" />
-							</Button>
+							)}
+						</Button>
 						</div>
 					</span>
 					<CodeEditor

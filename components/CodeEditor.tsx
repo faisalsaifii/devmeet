@@ -65,7 +65,7 @@ const CodeEditor = ({
 				options={{
 					selectOnLineNumbers: true,
 					colorDecorators: true,
-					fontSize: Number(editorFontSize),
+					fontSize: Math.min(52, Math.max(2, Number(editorFontSize) || 14)),
 					automaticLayout: true,
 				}}
 				onChange={shared ? undefined : onChange}

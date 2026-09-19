@@ -15,6 +15,7 @@ const VideoPlayer = () => {
     call,
     currentWindow,
     cameraEnabled,
+    remoteStream,
     remoteCameraEnabled,
     remoteMicEnabled,
   } = useSocket();
@@ -38,7 +39,10 @@ const VideoPlayer = () => {
           {remoteCameraEnabled ? (
             <video
               playsInline
-              ref={userVideoRef}
+              ref={(el) => {
+                userVideoRef.current = el;
+                if (el && remoteStream) el.srcObject = remoteStream;
+              }}
               autoPlay
               className="h-full w-full overflow-hidden object-cover"
             />

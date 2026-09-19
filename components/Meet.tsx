@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import VideoPlayer from "./VideoPlayer/VideoPlayer";
 import LoadingScreen from "./LoadingScreen";
@@ -25,6 +25,15 @@ function Meet() {
 	const { defaultLayout, onLayoutChanged } = useDefaultLayout({
 		id: "meet-video-code-split",
 	});
+
+	/* eslint-disable react-hooks/set-state-in-effect -- show the first-run guide only once */
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+		if (localStorage.getItem("dm-seen-info")) return;
+		localStorage.setItem("dm-seen-info", "1");
+		setShowInfo(true);
+	}, []);
+	/* eslint-enable react-hooks/set-state-in-effect */
 
 	if (roomEnded) {
 		return (

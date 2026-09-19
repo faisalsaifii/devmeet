@@ -59,11 +59,17 @@ export async function POST(request: Request) {
 			);
 		}
 
-		const stdout = data.stdout
-			? Buffer.from(data.stdout, "base64").toString("utf-8")
-			: "";
+		const decode = (value?: string) =>
+			value ? Buffer.from(value, "base64").toString("utf-8") : "";
 
-		return NextResponse.json({ stdout });
+		return NextResponse.json({
+			stdout: decode(data.stdout),
+			stderr: decode(data.stderr),
+			compileOutput: decode(data.compile_output),
+			status: data.status,
+			time: data.time,
+			memory: data.memory,
+		});
 	} catch (error) {
 		console.error(error);
 		return NextResponse.json(
