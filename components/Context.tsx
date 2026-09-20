@@ -36,6 +36,7 @@ type SocketContextValue = {
 	setName: (name: string) => void;
 	callEnded: boolean;
 	roomEnded: boolean;
+	roomFull: boolean;
 	micEnabled: boolean;
 	toggleMic: () => void;
 	cameraEnabled: boolean;
@@ -95,6 +96,7 @@ const ContextProvider = ({
 	const [remoteMicEnabled, setRemoteMicEnabled] = useState(true);
 	const [remoteCameraEnabled, setRemoteCameraEnabled] = useState(true);
 	const [roomEnded, setRoomEnded] = useState(initialRoomEnded);
+	const [roomFull, setRoomFull] = useState(false);
 
 	const myVideoRef = useRef<HTMLVideoElement | null>(null);
 	const userVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -221,6 +223,12 @@ const ContextProvider = ({
 
 		socket.on("roomClosed", () => {
 			setRoomEnded(true);
+			connectionRef.current?.destroy();
+			streamRef.current?.getTracks().forEach((track) => track.stop());
+		});
+
+		socket.on("roomFull", () => {
+			setRoomFull(true);
 			connectionRef.current?.destroy();
 			streamRef.current?.getTracks().forEach((track) => track.stop());
 		});
@@ -444,6 +452,7 @@ const ContextProvider = ({
 	const connecting =
 		!callEnded &&
 		!roomEnded &&
+		!roomFull &&
 		!connectionGraceElapsed &&
 		!(stream && remoteStream);
 
@@ -462,6 +471,7 @@ const ContextProvider = ({
 				setName,
 				callEnded,
 				roomEnded,
+				roomFull,
 				micEnabled,
 				toggleMic,
 				cameraEnabled,

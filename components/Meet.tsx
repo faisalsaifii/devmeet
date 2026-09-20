@@ -20,7 +20,7 @@ import {
 import { useDefaultLayout } from "react-resizable-panels";
 
 function Meet() {
-	const { currentWindow, roomEnded, connecting } = useSocket();
+	const { currentWindow, roomEnded, roomFull, connecting } = useSocket();
 	const [showInfo, setShowInfo] = useState(false);
 	const { defaultLayout, onLayoutChanged } = useDefaultLayout({
 		id: "meet-video-code-split",
@@ -41,6 +41,23 @@ function Meet() {
 				<h1 className="text-4xl font-bold">Call Ended</h1>
 				<p className="text-lg text-muted-foreground">
 					This meeting has been closed permanently.
+				</p>
+				<Link href="/meet">
+					<Button className="mt-4 bg-violet-500 text-white shadow-lg shadow-violet-950/40 hover:bg-violet-600">
+						<Phone className="mr-2 size-4" />
+						Start a new meet
+					</Button>
+				</Link>
+			</div>
+		);
+	}
+
+	if (roomFull) {
+		return (
+			<div className="flex h-full flex-col items-center justify-center gap-4">
+				<h1 className="text-4xl font-bold">Meet is Full</h1>
+				<p className="text-lg text-muted-foreground">
+					This meeting already has 2 members.
 				</p>
 				<Link href="/meet">
 					<Button className="mt-4 bg-violet-500 text-white shadow-lg shadow-violet-950/40 hover:bg-violet-600">

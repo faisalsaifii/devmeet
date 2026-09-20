@@ -56,6 +56,18 @@ app
 					socket.emit("roomClosed");
 					return;
 				}
+				const roomSockets = io.sockets.adapter.rooms.get(room);
+				let memberCount = 0;
+				if (roomSockets) {
+					for (const id of roomSockets) {
+						const member = io.sockets.sockets.get(id);
+						if (member && !member.disconnected) memberCount++;
+					}
+				}
+				if (memberCount >= 2) {
+					socket.emit("roomFull");
+					return;
+				}
 				socket.data.room = room;
 				socket.join(room);
 				socket.broadcast.to(room).emit("user-joined", { id: socket.id });
