@@ -33,7 +33,7 @@ const Info = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 			defaultOpen
 			onOpenChange={(open) => setShowInfo(open)}
 		>
-			<DialogContent className="max-w-2xl overflow-hidden rounded-2xl border-foreground/10 bg-card p-0 text-foreground">
+			<DialogContent className="overflow-hidden rounded-2xl border-foreground/10 bg-card p-0 text-foreground sm:max-w-3xl">
 				<div
 					aria-hidden
 					className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-violet/20 blur-3xl"
@@ -43,7 +43,7 @@ const Info = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 					className="pointer-events-none absolute -bottom-28 -left-20 size-56 rounded-full bg-violet/10 blur-3xl"
 				/>
 
-				<div className="relative flex flex-col gap-6 p-6 sm:p-8">
+				<div className="no-scrollbar relative grid max-h-[calc(100dvh-2rem)] gap-8 overflow-y-auto p-6 sm:p-8 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-x-12">
 					<DialogHeader className="gap-4">
 						<span className="inline-flex w-fit items-center gap-2 rounded-full border border-foreground/10 px-3 py-1 font-mono text-[0.62rem] uppercase tracking-[0.25em] text-lavender">
 							<span className="bg-live size-1.5 rounded-full" />
