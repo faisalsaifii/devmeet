@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import CameraPreview from "@/components/CameraPreview";
 import { confirmName, getStoredName, storeName } from "@/lib/name";
 
 const StartMeeting = ({ autoOpen = false }: { autoOpen?: boolean }) => {
@@ -56,9 +57,11 @@ const StartMeeting = ({ autoOpen = false }: { autoOpen?: boolean }) => {
 						<DialogTitle>What&apos;s your name?</DialogTitle>
 						<DialogDescription>
 							Enter your name so the other participant knows who&apos;s
-							joining.
+							joining. Grant camera &amp; mic access so you&apos;re ready
+							when the call starts.
 						</DialogDescription>
 					</DialogHeader>
+					<CameraPreview />
 					<form
 						onSubmit={(e) => {
 							e.preventDefault();

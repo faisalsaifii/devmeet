@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import CameraPreview from "@/components/CameraPreview";
 import { confirmName, getStoredName, isNameConfirmed, storeName } from "@/lib/name";
 
 const NameGate = ({ children }: { children: ReactNode }) => {
@@ -53,8 +54,11 @@ const NameGate = ({ children }: { children: ReactNode }) => {
 					<DialogTitle>What&apos;s your name?</DialogTitle>
 					<DialogDescription>
 						Enter your name so the other participant knows who&apos;s joining.
+						Grant camera &amp; mic access so you&apos;re ready when the call
+						starts.
 					</DialogDescription>
 				</DialogHeader>
+				<CameraPreview />
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();

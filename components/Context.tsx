@@ -12,6 +12,7 @@ import {
 import { io, type Socket } from "socket.io-client";
 import type { Instance as PeerInstance } from "simple-peer";
 import { getStoredName } from "@/lib/name";
+import { getMediaState, storeMediaState } from "@/lib/media";
 
 type Signal = Parameters<PeerInstance["signal"]>[0];
 type MediaKind = "audio" | "video";
@@ -125,6 +126,12 @@ const ContextProvider = ({
 		setEditorTheme(getStoredValue("editor-theme", "vs-dark"));
 		setEditorFontSize(getStoredValue("editor-font-size", "18"));
 		setCurrentWindow(getStoredValue("current-window", "both"));
+		const { micEnabled: savedMic, cameraEnabled: savedCamera } =
+			getMediaState();
+		micEnabledRef.current = savedMic;
+		cameraEnabledRef.current = savedCamera;
+		setMicEnabled(savedMic);
+		setCameraEnabled(savedCamera);
 		setHydrated(true);
 	}, []);
 	/* eslint-enable react-hooks/set-state-in-effect */
@@ -134,7 +141,8 @@ const ContextProvider = ({
 		localStorage.setItem("editor-theme", editorTheme);
 		localStorage.setItem("editor-font-size", String(editorFontSize));
 		localStorage.setItem("current-window", currentWindow);
-	}, [hydrated, editorTheme, editorFontSize, currentWindow]);
+		storeMediaState({ micEnabled, cameraEnabled });
+	}, [hydrated, editorTheme, editorFontSize, currentWindow, micEnabled, cameraEnabled]);
 
 	useEffect(() => {
 		const socket = io();
