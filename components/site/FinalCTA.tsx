@@ -14,7 +14,7 @@ export function FinalCTA() {
     <section className="relative py-32 sm:py-44">
       <div
         aria-hidden
-        className="animate-drift absolute top-1/2 left-1/2 h-[46vh] w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 blur-[130px]"
+        className="animate-drift absolute top-1/2 left-1/2 h-[46vh] w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-[130px]"
         style={{
           background: "radial-gradient(circle, var(--violet), transparent 70%)",
         }}

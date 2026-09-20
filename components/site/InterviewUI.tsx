@@ -210,7 +210,7 @@ export function InterviewUI({
                   "text-primary-foreground rounded-md px-2.5 py-1 text-[0.62rem] font-semibold",
                   dim("run"),
                 )}
-                style={{ backgroundImage: "var(--gradient-violet)" }}
+                style={{ backgroundImage: "var(--gradient-button)" }}
               >
                 ▶ Run
               </span>

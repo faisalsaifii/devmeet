@@ -62,11 +62,11 @@
 :root:has(.dm-site) {
   --radius: 0.875rem;
 
-  --background: oklch(0.11 0.021 300);
+  --background: oklch(0.07 0.018 300);
   --foreground: oklch(0.975 0.008 300);
-  --card: oklch(0.155 0.024 300);
+  --card: oklch(0.135 0.024 300);
   --card-foreground: oklch(0.975 0.008 300);
-  --popover: oklch(0.145 0.024 300);
+  --popover: oklch(0.12 0.024 300);
   --popover-foreground: oklch(0.975 0.008 300);
 
   --primary: oklch(0.63 0.216 300.5);
@@ -74,23 +74,23 @@
   --secondary: oklch(0.44 0.213 296);
   --secondary-foreground: oklch(0.98 0.006 300);
 
-  --muted: oklch(0.19 0.024 300);
-  --muted-foreground: oklch(0.66 0.026 300);
+  --muted: oklch(0.16 0.024 300);
+  --muted-foreground: oklch(0.68 0.026 300);
   --accent: oklch(0.68 0.214 305);
   --accent-foreground: oklch(0.12 0.02 300);
 
   --destructive: oklch(0.6 0.22 22);
   --destructive-foreground: oklch(0.98 0.005 300);
 
-  --border: oklch(0.985 0.008 300 / 9%);
-  --input: oklch(0.985 0.008 300 / 12%);
+  --border: oklch(0.985 0.008 300 / 12%);
+  --input: oklch(0.985 0.008 300 / 15%);
   --ring: oklch(0.63 0.216 300.5);
 
   --violet: oklch(0.68 0.214 305);
   --lavender: oklch(0.83 0.088 300);
-  --deep: oklch(0.085 0.018 300);
-  --surface: oklch(0.145 0.022 300);
-  --surface-2: oklch(0.185 0.026 300);
+  --deep: oklch(0.045 0.016 300);
+  --surface: oklch(0.125 0.022 300);
+  --surface-2: oklch(0.165 0.026 300);
 
   --code-key: oklch(0.74 0.16 305);
   --code-str: oklch(0.82 0.13 160);
@@ -104,6 +104,12 @@
     oklch(0.83 0.088 300),
     oklch(0.68 0.214 305) 45%,
     oklch(0.55 0.22 292)
+  );
+  --gradient-button: linear-gradient(
+    100deg,
+    oklch(0.48 0.19 296),
+    oklch(0.56 0.22 301) 55%,
+    oklch(0.63 0.2 306)
   );
   --gradient-surface: linear-gradient(
     160deg,

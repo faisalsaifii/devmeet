@@ -22,20 +22,20 @@ export function Atmosphere() {
       <div className="bg-background absolute inset-0" />
       <div className="line-grid absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_50%_0%,black,transparent_72%)]" />
       <div
-        className="animate-drift absolute -top-[22%] left-1/2 h-[62vh] w-[70vw] -translate-x-1/2 rounded-full opacity-40 blur-[120px]"
+        className="animate-drift absolute -top-[22%] left-1/2 h-[62vh] w-[70vw] -translate-x-1/2 rounded-full opacity-30 blur-[120px]"
         style={{
           background:
             "radial-gradient(circle, var(--primary), transparent 68%)",
         }}
       />
       <div
-        className="animate-drift absolute top-[45%] -left-[15%] h-[52vh] w-[46vw] rounded-full opacity-25 blur-[130px]"
+        className="animate-drift absolute top-[45%] -left-[15%] h-[52vh] w-[46vw] rounded-full opacity-[0.18] blur-[130px]"
         style={{
           background: "radial-gradient(circle, var(--violet), transparent 70%)",
         }}
       />
       <div
-        className="animate-drift absolute top-[110%] right-[-10%] h-[55vh] w-[45vw] rounded-full opacity-20 blur-[130px]"
+        className="animate-drift absolute top-[110%] right-[-10%] h-[55vh] w-[45vw] rounded-full opacity-[0.14] blur-[130px]"
         style={{
           background:
             "radial-gradient(circle, var(--secondary), transparent 70%)",
@@ -63,7 +63,7 @@ export function Atmosphere() {
           />
         ))}
 
-      <div className="grain absolute inset-0 opacity-60" />
+      <div className="grain absolute inset-0 opacity-40" />
     </div>
   );
 }

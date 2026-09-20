@@ -27,7 +27,7 @@ export function Hero() {
   const rotateX = useTransform(soft, [0, 0.55], [17, 0]);
   const scale = useTransform(soft, [0, 0.55], [0.92, 1.02]);
   const y = useTransform(soft, [0, 1], [0, -90]);
-  const glow = useTransform(soft, [0, 0.6], [0.35, 0.8]);
+  const glow = useTransform(soft, [0, 0.6], [0.22, 0.5]);
   const copyY = useTransform(soft, [0, 1], [0, -160]);
   const copyOpacity = useTransform(soft, [0, 0.55], [1, 0]);
 

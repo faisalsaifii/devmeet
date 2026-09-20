@@ -113,7 +113,7 @@ function RunFragment() {
       <div className="mb-2 flex items-center gap-2">
         <span
           className="text-primary-foreground rounded px-1.5 py-0.5 text-[0.55rem] font-semibold"
-          style={{ backgroundImage: "var(--gradient-violet)" }}
+          style={{ backgroundImage: "var(--gradient-button)" }}
         >
           ▶ Run
         </span>

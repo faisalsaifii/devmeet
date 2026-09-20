@@ -172,7 +172,7 @@ export function MagneticLink({
         <>
           <span
             className="absolute inset-0 rounded-full"
-            style={{ backgroundImage: "var(--gradient-violet)" }}
+            style={{ backgroundImage: "var(--gradient-button)" }}
           />
           <span className="absolute inset-0 overflow-hidden rounded-full">
             <span className="animate-sheen absolute inset-y-0 -left-1/2 w-1/3 bg-foreground/25 blur-md" />
