@@ -6,6 +6,7 @@ import { Editor, type OnMount } from "@monaco-editor/react";
 import { MonacoBinding } from "y-monaco";
 import type { Awareness } from "y-protocols/awareness";
 import * as Y from "yjs";
+import { cn } from "cn";
 import { useSocket } from "./Context";
 
 type CodeEditorProps = {
@@ -14,6 +15,7 @@ type CodeEditorProps = {
 	language?: string;
 	ytext?: Y.Text;
 	awareness?: Awareness | null;
+	className?: string;
 };
 
 const CodeEditor = ({
@@ -22,6 +24,7 @@ const CodeEditor = ({
 	language,
 	ytext,
 	awareness,
+	className,
 }: CodeEditorProps) => {
 	const { editorTheme, editorFontSize } = useSocket();
 	const bindingRef = useRef<MonacoBinding | null>(null);
@@ -57,7 +60,7 @@ const CodeEditor = ({
 	const shared = Boolean(ytext);
 
 	return (
-		<div className="flex min-h-0 flex-1 p-1 bg-card rounded-b-md">
+		<div className={cn("flex min-h-0 flex-1 p-1 bg-card rounded-b-md", className)}>
 			<Editor
 				language={language}
 				theme={editorTheme}

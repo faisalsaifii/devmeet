@@ -7,12 +7,24 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 export const LANGUAGE_CODES = ["c", "cpp", "java", "py"] as const;
 export type LanguageCode = (typeof LANGUAGE_CODES)[number];
 
+export const DOC_TEXT_KEY = "doc" as const;
+
 const STORAGE_KEYS: Record<LanguageCode, string> = {
 	c: "c-code",
 	cpp: "cpp-code",
 	java: "java-code",
 	py: "py-code",
 };
+
+type CollabElement = { key: string; storageKey: string };
+
+const COLLAB_ELEMENTS: CollabElement[] = [
+	...LANGUAGE_CODES.map((code) => ({
+		key: code,
+		storageKey: STORAGE_KEYS[code],
+	})),
+	{ key: DOC_TEXT_KEY, storageKey: "doc-text" },
+];
 
 const getCollabUrl = () => {
 	if (typeof window === "undefined") return "ws://localhost:3000/collab";
@@ -52,10 +64,10 @@ export const useCodeCollab = (roomId?: string): CodeCollab | null => {
 		if (!collab) return;
 		const { doc, provider } = collab;
 
-		const writeBack: Array<() => void> = LANGUAGE_CODES.map((code) => {
-			const text = doc.getText(code);
+		const writeBack: Array<() => void> = COLLAB_ELEMENTS.map(({ key, storageKey }) => {
+			const text = doc.getText(key);
 			const onUpdate = () => {
-				localStorage.setItem(STORAGE_KEYS[code], text.toString());
+				localStorage.setItem(storageKey, text.toString());
 			};
 			text.observe(onUpdate);
 			return () => text.unobserve(onUpdate);
@@ -65,10 +77,10 @@ export const useCodeCollab = (roomId?: string): CodeCollab | null => {
 		const seedFromStorage = () => {
 			if (seeded) return;
 			seeded = true;
-			for (const code of LANGUAGE_CODES) {
-				const text = doc.getText(code);
+			for (const { key, storageKey } of COLLAB_ELEMENTS) {
+				const text = doc.getText(key);
 				if (text.length > 0) continue;
-				const stored = localStorage.getItem(STORAGE_KEYS[code]);
+				const stored = localStorage.getItem(storageKey);
 				if (stored) {
 					text.insert(0, stored);
 				}

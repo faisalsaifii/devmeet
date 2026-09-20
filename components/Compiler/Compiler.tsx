@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import CodeEditor from "../CodeEditor";
 import { useSocket } from "../Context";
-import { useCodeCollab } from "./useCodeCollab";
+import { useCodeCollab, DOC_TEXT_KEY } from "./useCodeCollab";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -44,6 +44,7 @@ const Compiler = () => {
   const [output, setOutput] = useState("");
   const [languageId, setLanguageId] = useState("71");
   const [currentWindow, setCurrentWindow] = useState("output");
+  const [currentView, setCurrentView] = useState<"code" | "doc">("code");
   const [isRunning, setIsRunning] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
@@ -56,6 +57,7 @@ const Compiler = () => {
     setOutput(localStorage.getItem("output") || "");
     setLanguageId(localStorage.getItem("language_id") || "71");
     setCurrentWindow(localStorage.getItem("current-io-window") || "output");
+    setCurrentView(localStorage.getItem("current-editor-view") === "doc" ? "doc" : "code");
     setHydrated(true);
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -66,7 +68,8 @@ const Compiler = () => {
     localStorage.setItem("language_id", languageId);
     localStorage.setItem("input", input);
     localStorage.setItem("current-io-window", currentWindow);
-  }, [hydrated, languageId, input, output, currentWindow]);
+    localStorage.setItem("current-editor-view", currentView);
+  }, [hydrated, languageId, input, output, currentWindow, currentView]);
 
   const getSourceCode = useCallback(() => {
     if (!collab) return "";
@@ -150,9 +153,26 @@ const Compiler = () => {
         className="p-1"
       >
         <div className="flex h-full flex-col">
-          <span className="flex items-center justify-between rounded-t-md bg-card p-2 pl-3 text-md">
-            <span className="font-bold">Code</span>
-            <div className="flex items-center">
+          <Tabs
+            value={currentView}
+            onValueChange={(value) =>
+              setCurrentView(value === "doc" ? "doc" : "code")
+            }
+            className="flex min-h-0 flex-1 flex-col gap-0"
+          >
+            <span className="flex items-center justify-between rounded-t-md bg-card p-2 pl-3 text-md">
+              <TabsList className="rounded-md bg-muted p-1 font-normal">
+                <TabsTrigger
+                  value="code"
+                  className="data-active:bg-background"
+                >
+                  Code
+                </TabsTrigger>
+                <TabsTrigger value="doc" className="data-active:bg-background">
+                  Doc
+                </TabsTrigger>
+              </TabsList>
+              <div className="flex items-center">
               <Input
                 value={editorFontSize}
                 onChange={(e) => setEditorFontSize(e.target.value)}
@@ -217,13 +237,22 @@ const Compiler = () => {
                 )}
               </Button>
             </div>
-          </span>
-          <CodeEditor
-            key={languageId}
-            ytext={collab ? collab.doc.getText(language.code) : undefined}
-            awareness={collab?.provider.awareness}
-            language={language.monaco}
-          />
+            </span>
+            <CodeEditor
+              key="doc"
+              ytext={collab ? collab.doc.getText(DOC_TEXT_KEY) : undefined}
+              awareness={collab?.provider.awareness}
+              language="markdown"
+              className={currentView === "doc" ? "" : "hidden"}
+            />
+            <CodeEditor
+              key={languageId}
+              ytext={collab ? collab.doc.getText(language.code) : undefined}
+              awareness={collab?.provider.awareness}
+              language={language.monaco}
+              className={currentView === "doc" ? "hidden" : ""}
+            />
+          </Tabs>
         </div>
       </ResizablePanel>
       <ResizableHandle withHandle />
@@ -250,21 +279,20 @@ const Compiler = () => {
                 </TabsTrigger>
               </TabsList>
             </span>
-            {currentWindow === "output" ? (
-              <CodeEditor
-                key="output"
-                value={output}
-                onChange={(newValue) => setOutput(newValue ?? "")}
-                language="plaintext"
-              />
-            ) : (
-              <CodeEditor
-                key="input"
-                value={input}
-                onChange={(newValue) => setInput(newValue ?? "")}
-                language="plaintext"
-              />
-            )}
+            <CodeEditor
+              key="output"
+              value={output}
+              onChange={(newValue) => setOutput(newValue ?? "")}
+              language="plaintext"
+              className={currentWindow === "output" ? "" : "hidden"}
+            />
+            <CodeEditor
+              key="input"
+              value={input}
+              onChange={(newValue) => setInput(newValue ?? "")}
+              language="plaintext"
+              className={currentWindow === "output" ? "hidden" : ""}
+            />
           </Tabs>
         </div>
       </ResizablePanel>
