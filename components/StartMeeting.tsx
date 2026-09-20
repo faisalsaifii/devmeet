@@ -42,53 +42,67 @@ const StartMeeting = ({ autoOpen = false }: { autoOpen?: boolean }) => {
 	};
 
 	return (
-		<>
+		<div className="meet-bootstrap">
 			{!autoOpen && (
 				<button
 					onClick={() => setOpen(true)}
-					className="text-lg m-8 flex p-3 items-center justify-center mx-2 font-thin rounded-md bg-neutral-200 dark:bg-neutral-800"
+					style={{ backgroundImage: "var(--gradient-button)" }}
+					className="m-8 flex cursor-pointer items-center justify-center rounded-full border-0 p-3 text-lg font-medium text-white shadow-[0_20px_50px_-22px_oklch(0.63_0.216_300.5/90%)] transition-opacity hover:opacity-90"
 				>
 					Start a Meeting Now
 				</button>
 			)}
 			<Dialog open={open} onOpenChange={handleOpenChange}>
-				<DialogContent className="sm:max-w-lg">
-					<DialogHeader>
-						<DialogTitle>What&apos;s your name?</DialogTitle>
-						<DialogDescription>
-							Enter your name so the other participant knows who&apos;s
-							joining. Grant camera &amp; mic access so you&apos;re ready
-							when the call starts.
-						</DialogDescription>
-					</DialogHeader>
-					<CameraPreview />
-					<form
-						onSubmit={(e) => {
-							e.preventDefault();
-							if (name.trim()) createMeeting();
-						}}
-						className="flex flex-col gap-4"
-					>
-						<Input
-							autoFocus
-							type="text"
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-							placeholder="Your name"
-						/>
-						<DialogFooter>
-							<Button
-								type="submit"
-								disabled={!name.trim()}
-								className="w-full bg-violet-500 text-white shadow-lg shadow-violet-950/40 hover:bg-violet-600 sm:w-auto"
-							>
-								Create Meet
-							</Button>
-						</DialogFooter>
-					</form>
+					<DialogContent className="overflow-hidden border-white/10 p-0 sm:max-w-lg">
+					<div
+						aria-hidden
+						className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-violet/25 blur-3xl"
+					/>
+					<div
+						aria-hidden
+						className="pointer-events-none absolute -bottom-28 -left-20 size-56 rounded-full bg-violet/15 blur-3xl"
+					/>
+					<div className="relative grid gap-4 p-4 sm:p-6">
+						<DialogHeader>
+							<DialogTitle className="text-lg font-semibold">
+								What&apos;s your name?
+							</DialogTitle>
+							<DialogDescription>
+								Enter your name so the other participant knows who&apos;s
+								joining. Grant camera &amp; mic access so you&apos;re ready
+								when the call starts.
+							</DialogDescription>
+						</DialogHeader>
+						<CameraPreview />
+						<form
+							onSubmit={(e) => {
+								e.preventDefault();
+								if (name.trim()) createMeeting();
+							}}
+							className="flex flex-col gap-4"
+						>
+							<Input
+								autoFocus
+								type="text"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								placeholder="Your name"
+							/>
+							<DialogFooter>
+								<Button
+									type="submit"
+									disabled={!name.trim()}
+									style={{ backgroundImage: "var(--gradient-button)" }}
+									className="h-10 w-full rounded-full border-0 text-white shadow-[0_18px_44px_-20px_oklch(0.63_0.216_300.5/90%)] transition-opacity hover:opacity-90 sm:w-auto"
+								>
+									Create Meet
+								</Button>
+							</DialogFooter>
+						</form>
+					</div>
 				</DialogContent>
 			</Dialog>
-		</>
+		</div>
 	);
 };
 

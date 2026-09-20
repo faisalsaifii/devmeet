@@ -15,10 +15,10 @@ const Notifications = () => {
 	return (
 		<>
 			{call.isReceivingCall && !callAccepted && !callEnded && (
-				<Card
-					className="absolute bottom-6 right-6 w-80 rounded-2xl border-0 bg-card/60 p-4 backdrop-blur-2xl"
-					style={{ zIndex: 100 }}
-				>
+<Card
+				className="absolute right-6 bottom-6 w-80 rounded-2xl border border-white/10 bg-card/60 p-4 shadow-[0_24px_60px_-24px_oklch(0.63_0.216_300.5/60%)] backdrop-blur-2xl"
+				style={{ zIndex: 100 }}
+			>
 					<CardContent className="p-0">
 						<p className="pr-20 text-3xl font-thin">
 							{call.name || "Somebody"} has sent an invite

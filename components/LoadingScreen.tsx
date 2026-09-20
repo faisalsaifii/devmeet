@@ -29,7 +29,7 @@ const LoadingScreen = () => {
         {tiles.map((i) => (
           <div
             key={i}
-            className="animate-shimmer relative aspect-video w-full overflow-hidden rounded-2xl bg-muted md:w-1/2"
+            className="meet-tile animate-shimmer relative aspect-video w-full md:w-1/2"
           >
             <div className="animate-shimmer absolute right-2 bottom-2 h-5 w-20 overflow-hidden rounded-md bg-foreground/10" />
           </div>

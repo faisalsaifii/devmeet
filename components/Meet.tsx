@@ -37,13 +37,33 @@ function Meet() {
 
 	if (roomEnded) {
 		return (
-			<div className="flex h-full flex-col items-center justify-center gap-4">
-				<h1 className="text-4xl font-bold">Call Ended</h1>
-				<p className="text-lg text-muted-foreground">
-					This meeting has been closed permanently.
-				</p>
-				<Link href="/meet">
-					<Button className="mt-4 bg-violet-500 text-white shadow-lg shadow-violet-950/40 hover:bg-violet-600">
+			<div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
+				<div className="relative">
+					<div
+						aria-hidden
+						className="absolute -inset-8 rounded-full bg-violet/25 blur-3xl"
+					/>
+					<div
+						className="relative grid size-20 place-items-center rounded-2xl text-white shadow-[0_24px_64px_-24px_oklch(0.63_0.216_300.5/90%)] ring-1 ring-white/20"
+						style={{ backgroundImage: "var(--gradient-violet)" }}
+					>
+						<Phone className="size-8" />
+					</div>
+				</div>
+				<div className="mt-4">
+					<h1 className="text-5xl font-black tracking-tight">
+						Call{" "}
+						<span className="meet-title-gradient">Ended</span>
+					</h1>
+					<p className="mt-2 text-lg text-muted-foreground">
+						This meeting has been closed permanently.
+					</p>
+				</div>
+				<Link href="/meet" className="mt-4">
+					<Button
+						className="h-11 rounded-full border-0 px-7 text-white shadow-[0_20px_50px_-22px_oklch(0.63_0.216_300.5/90%)] hover:opacity-90"
+						style={{ backgroundImage: "var(--gradient-button)" }}
+					>
 						<Phone className="mr-2 size-4" />
 						Start a new meet
 					</Button>
@@ -54,13 +74,34 @@ function Meet() {
 
 	if (roomFull) {
 		return (
-			<div className="flex h-full flex-col items-center justify-center gap-4">
-				<h1 className="text-4xl font-bold">Meet is Full</h1>
-				<p className="text-lg text-muted-foreground">
-					This meeting already has 2 members.
-				</p>
-				<Link href="/meet">
-					<Button className="mt-4 bg-violet-500 text-white shadow-lg shadow-violet-950/40 hover:bg-violet-600">
+			<div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
+				<div className="relative">
+					<div
+						aria-hidden
+						className="absolute -inset-8 rounded-full bg-rose-500/20 blur-3xl"
+					/>
+					<div
+						className="relative grid size-20 place-items-center rounded-2xl bg-rose-500/90 text-white shadow-[0_24px_64px_-24px_oklch(0.64_0.2_20/80%)] ring-1 ring-white/20"
+					>
+						<Phone className="size-8" />
+					</div>
+				</div>
+				<div className="mt-4">
+					<h1 className="text-5xl font-black tracking-tight">
+						Meet is{" "}
+						<span className="bg-rose-400 bg-clip-text text-transparent">
+							Full
+						</span>
+					</h1>
+					<p className="mt-2 text-lg text-muted-foreground">
+						This meeting already has 2 members.
+					</p>
+				</div>
+				<Link href="/meet" className="mt-4">
+					<Button
+						className="h-11 rounded-full border-0 px-7 text-white shadow-[0_20px_50px_-22px_oklch(0.63_0.216_300.5/90%)] hover:opacity-90"
+						style={{ backgroundImage: "var(--gradient-button)" }}
+					>
 						<Phone className="mr-2 size-4" />
 						Start a new meet
 					</Button>

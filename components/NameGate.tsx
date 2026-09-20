@@ -49,40 +49,53 @@ const NameGate = ({ children }: { children: ReactNode }) => {
 				if (!open) router.push("/");
 			}}
 		>
-			<DialogContent className="sm:max-w-lg">
-				<DialogHeader>
-					<DialogTitle>What&apos;s your name?</DialogTitle>
-					<DialogDescription>
-						Enter your name so the other participant knows who&apos;s joining.
-						Grant camera &amp; mic access so you&apos;re ready when the call
-						starts.
-					</DialogDescription>
-				</DialogHeader>
-				<CameraPreview />
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						joinMeeting();
-					}}
-					className="flex flex-col gap-4"
-				>
-					<Input
-						autoFocus
-						type="text"
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-						placeholder="Your name"
-					/>
-					<DialogFooter>
-						<Button
-							type="submit"
-							disabled={!name.trim()}
-							className="w-full bg-violet-500 text-white shadow-lg shadow-violet-950/40 hover:bg-violet-600 sm:w-auto"
-						>
-							Join Meet
-						</Button>
-					</DialogFooter>
-				</form>
+			<DialogContent className="overflow-hidden border-white/10 p-0 sm:max-w-lg">
+				<div
+					aria-hidden
+					className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-violet/25 blur-3xl"
+				/>
+				<div
+					aria-hidden
+					className="pointer-events-none absolute -bottom-28 -left-20 size-56 rounded-full bg-violet/15 blur-3xl"
+				/>
+				<div className="relative grid gap-4 p-4 sm:p-6">
+					<DialogHeader>
+						<DialogTitle className="text-lg font-semibold">
+							What&apos;s your name?
+						</DialogTitle>
+						<DialogDescription>
+							Enter your name so the other participant knows who&apos;s joining.
+							Grant camera &amp; mic access so you&apos;re ready when the call
+							starts.
+						</DialogDescription>
+					</DialogHeader>
+					<CameraPreview />
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							joinMeeting();
+						}}
+						className="flex flex-col gap-4"
+					>
+						<Input
+							autoFocus
+							type="text"
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+							placeholder="Your name"
+						/>
+						<DialogFooter>
+							<Button
+								type="submit"
+								disabled={!name.trim()}
+								style={{ backgroundImage: "var(--gradient-button)" }}
+								className="h-10 w-full rounded-full border-0 text-white shadow-[0_18px_44px_-20px_oklch(0.63_0.216_300.5/90%)] transition-opacity hover:opacity-90 sm:w-auto"
+							>
+								Join Meet
+							</Button>
+						</DialogFooter>
+					</form>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);

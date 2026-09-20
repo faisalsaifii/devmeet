@@ -2,7 +2,32 @@
 
 import { useSocket } from "../Context";
 import { Badge } from "@/components/ui/badge";
-import { MicOff, VideoOff } from "lucide-react";
+import { MicOff, User, VideoOff } from "lucide-react";
+
+const nameBadge =
+  "flex h-auto w-auto items-center gap-1.5 rounded-full border border-white/15 bg-black/60 px-2.5 py-1 text-[0.7rem] font-black text-white backdrop-blur-md";
+
+const micOffBadge =
+  "flex h-auto w-auto items-center gap-1 rounded-full border border-white/15 bg-black/60 px-2.5 py-1 text-xs font-black text-white backdrop-blur-md";
+
+const CameraOff = () => (
+  <div className="relative flex h-full w-full flex-col items-center justify-center gap-3 p-6">
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_50%_40%,oklch(0.68_0.214_305/28%),transparent_68%)]"
+    />
+    <span
+      className="relative grid size-14 place-items-center rounded-full text-white ring-1 ring-white/20 shadow-[0_16px_40px_-16px_oklch(0.63_0.216_300.5/90%)]"
+      style={{ backgroundImage: "var(--gradient-violet)" }}
+    >
+      <User className="size-6" />
+    </span>
+    <Badge className="relative border-0 bg-transparent p-0 text-sm text-muted-foreground">
+      <VideoOff className="mr-1.5 size-4" />
+      Camera is off
+    </Badge>
+  </div>
+);
 
 const VideoPlayer = () => {
   const {
@@ -26,17 +51,17 @@ const VideoPlayer = () => {
     <div
       className={`flex h-full ${
         horizontal
-          ? "flex-col md:flex-row items-center md:justify-center"
+          ? "flex-col items-center md:flex-row md:justify-center"
           : "flex-col"
       }`}
     >
       {callAccepted && !callEnded && (
         <div
-          className={`relative flex min-h-0 min-w-0 aspect-video w-full items-center justify-center overflow-hidden rounded-md bg-muted ${
+          className={`meet-tile relative flex aspect-video w-full min-h-0 min-w-0 items-center justify-center ${
             horizontal ? "mb-2 md:mb-0 md:mr-2 md:w-1/2" : "mb-2"
           }`}
         >
-          {remoteCameraEnabled ? (
+          {remoteCameraEnabled && (
             <video
               playsInline
               ref={(el) => {
@@ -46,31 +71,26 @@ const VideoPlayer = () => {
               autoPlay
               className="h-full w-full overflow-hidden object-cover"
             />
-          ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-              <VideoOff className="size-10 text-muted-foreground" />
-              <Badge className="border-0 bg-transparent font-thin text-sm text-muted-foreground">
-                Camera is off
-              </Badge>
-            </div>
           )}
+          {!remoteCameraEnabled && <CameraOff />}
           {!remoteMicEnabled && (
-            <Badge className="absolute bottom-1 left-1 flex h-auto w-auto items-center gap-1 rounded-md border-0 bg-black/50 px-2 py-0.5 text-xs font-black text-white">
+            <Badge className={`absolute left-2 top-2 ${micOffBadge}`}>
               <MicOff className="size-3" />
             </Badge>
           )}
-          <Badge className="absolute right-1 bottom-1 flex h-auto w-auto items-center rounded-md border-0 bg-black/50 px-2 py-0.5 text-xs font-black text-white">
+          <Badge className={`absolute bottom-2 right-2 ${nameBadge}`}>
+            <span className="size-1.5 rounded-full bg-live" />
             {call.name || "Someone"}
           </Badge>
         </div>
       )}
       {stream && (
         <div
-          className={`relative flex aspect-video w-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-md bg-muted ${
+          className={`meet-tile relative flex aspect-video w-full min-h-0 min-w-0 items-center justify-center ${
             horizontal ? "md:w-1/2" : ""
           }`}
         >
-          {cameraEnabled ? (
+          {cameraEnabled && (
             <video
               playsInline
               muted
@@ -81,15 +101,10 @@ const VideoPlayer = () => {
               autoPlay
               className="h-full w-full overflow-hidden object-cover"
             />
-          ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-              <VideoOff className="size-10 text-muted-foreground" />
-              <Badge className="border-0 bg-transparent font-thin text-sm text-muted-foreground">
-                Camera is off
-              </Badge>
-            </div>
           )}
-          <Badge className="absolute bottom-1 right-1 flex h-auto w-auto items-center rounded-md border-0 bg-black/50 px-2 py-0.5 text-xs font-black text-white">
+          {!cameraEnabled && <CameraOff />}
+          <Badge className={`absolute bottom-2 right-2 ${nameBadge}`}>
+            <span className="size-1.5 rounded-full bg-violet" />
             {name || "Me"}
           </Badge>
         </div>

@@ -41,27 +41,34 @@
 }
 
 :root:has(.meet-app) {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.055 0.02 300);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.135 0.03 300);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.115 0.03 300);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --secondary: oklch(0.19 0.032 300);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --muted: oklch(0.17 0.03 300);
+  --muted-foreground: oklch(0.75 0.03 300);
+  --accent: oklch(0.19 0.032 300);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(0.985 0.008 300 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.68 0.214 305);
   --violet: oklch(0.68 0.214 305);
   --lavender: oklch(0.83 0.088 300);
   --live: oklch(0.78 0.17 155);
+  --meet-bg: oklch(0.052 0.02 297);
+  --gradient-button: linear-gradient(
+    100deg,
+    oklch(0.48 0.19 296),
+    oklch(0.56 0.22 301) 55%,
+    oklch(0.63 0.2 306)
+  );
   --gradient-violet: linear-gradient(
     100deg,
     oklch(0.83 0.088 300),
@@ -72,10 +79,158 @@
 
 :root:has(.meet-app) body {
   color: var(--foreground-color);
-  background: var(--background-color);
+  background: oklch(0.052 0.02 297);
   height: 100dvh;
   display: flex;
   flex-direction: column;
+}
+
+/* ---------- Meet room: ambient atmosphere & surfaces ---------- */
+
+.meet-app {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      52% 46% at 14% 8%,
+      oklch(0.58 0.22 302 / 22%),
+      transparent 62%
+    ),
+    radial-gradient(
+      44% 42% at 92% 0%,
+      oklch(0.5 0.2 292 / 17%),
+      transparent 58%
+    ),
+    radial-gradient(
+      48% 44% at 84% 98%,
+      oklch(0.46 0.19 305 / 13%),
+      transparent 60%
+    ),
+    radial-gradient(
+      40% 38% at 24% 94%,
+      oklch(0.4 0.13 286 / 12%),
+      transparent 60%
+    ),
+    var(--meet-bg);
+}
+
+.meet-app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(
+    oklch(0.985 0.008 300 / 9%) 1px,
+    transparent 1px
+  );
+  background-size: 30px 30px;
+  -webkit-mask-image: radial-gradient(
+    82% 62% at 50% 34%,
+    black 0%,
+    transparent 82%
+  );
+  mask-image: radial-gradient(82% 62% at 50% 34%, black 0%, transparent 82%);
+}
+
+/* Restore the pointer cursor everywhere in a room — Tailwind v4 preflight
+   neutralizes it for buttons, and base-ui pills inside portals inherit from
+   these rules (the whole page is scoped when .meet-app is present). */
+.meet-app button,
+.meet-app [role="button"],
+.meet-app a,
+.meet-app select,
+.meet-app label,
+.meet-app summary,
+.meet-app [data-slot="toggle-group-item"],
+.meet-app [data-slot="tooltip-trigger"] {
+  cursor: pointer;
+}
+.meet-app button:disabled,
+.meet-app [role="button"]:disabled,
+.meet-app button[data-disabled],
+.meet-app [data-disabled][role="button"] {
+  cursor: not-allowed;
+}
+
+.meet-app::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+.meet-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: linear-gradient(
+    155deg,
+    oklch(0.27 0.05 300 / 72%),
+    oklch(0.12 0.03 293 / 78%)
+  );
+  box-shadow:
+    inset 0 1px 0 0 oklch(0.985 0.008 300 / 10%),
+    0 24px 64px -32px oklch(0.63 0.216 300.5 / 75%);
+}
+
+.meet-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    150deg,
+    oklch(0.985 0.008 300 / 34%),
+    oklch(0.985 0.008 300 / 9%) 38%,
+    oklch(0.985 0.008 300 / 3%) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.meet-glass {
+  border: 1px solid oklch(0.985 0.008 300 / 14%);
+  background: oklch(0.07 0.02 294 / 55%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 0 oklch(0.985 0.008 300 / 8%),
+    0 24px 60px -30px oklch(0.63 0.216 300.5 / 55%);
+}
+
+.meet-title-gradient {
+  background-image: var(--gradient-violet);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Standalone /meet landing page — exposes the same violet palette to portals */
+:root:has(.meet-bootstrap) {
+  --violet: oklch(0.68 0.214 305);
+  --lavender: oklch(0.83 0.088 300);
+  --live: oklch(0.78 0.17 155);
+  --gradient-violet: linear-gradient(
+    100deg,
+    oklch(0.83 0.088 300),
+    oklch(0.68 0.214 305) 45%,
+    oklch(0.55 0.22 292)
+  );
+  --gradient-button: linear-gradient(
+    100deg,
+    oklch(0.48 0.19 296),
+    oklch(0.56 0.22 301) 55%,
+    oklch(0.63 0.2 306)
+  );
 }
 
 .monaco-editor,

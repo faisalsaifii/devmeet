@@ -17,11 +17,11 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 	const { currentWindow, setCurrentWindow } = useSocket();
 
 	return (
-		<nav className="absolute top-0 z-50 w-full h-18 flex items-center p-2 justify-between">
+		<nav className="absolute top-0 z-50 flex h-18 w-full items-center justify-between bg-gradient-to-b from-black/50 via-black/25 to-transparent p-2">
 			<div className="flex items-center gap-3">
 				<Link href="/">
 					<Image
-						className="h-10 w-10 rounded-full"
+						className="h-10 w-10 rounded-full shadow-[0_0_0_1px_oklch(0.985_0.008_300/20%),0_8px_24px_-8px_oklch(0.63_0.216_300.5/70%)]"
 						width={40}
 						height={40}
 						src="/img/logo.svg"
@@ -36,23 +36,23 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 					const next = values[0];
 					if (next) setCurrentWindow(next);
 				}}
-				className="rounded-md bg-muted p-1 font-thin"
+				className="rounded-full border border-white/10 bg-white/10 p-1 font-thin shadow-inner shadow-black/30 backdrop-blur-xl"
 			>
 				<ToggleGroupItem
 					value="meet"
-					className="rounded-md bg-transparent px-3 aria-pressed:bg-background data-pressed:bg-background"
+					className="rounded-full px-3 text-white/60 transition-colors hover:bg-white/10 hover:text-white aria-pressed:bg-white/90 data-pressed:bg-white/90 aria-pressed:text-neutral-900 data-pressed:text-neutral-900"
 				>
 					Meet
 				</ToggleGroupItem>
 				<ToggleGroupItem
 					value="both"
-					className="hidden rounded-md bg-transparent px-3 aria-pressed:bg-background data-pressed:bg-background md:inline-flex"
+					className="hidden rounded-full px-3 text-white/60 transition-colors hover:bg-white/10 hover:text-white aria-pressed:bg-white/90 data-pressed:bg-white/90 aria-pressed:text-neutral-900 data-pressed:text-neutral-900 md:inline-flex"
 				>
 					Home
 				</ToggleGroupItem>
 				<ToggleGroupItem
 					value="code"
-					className="rounded-md bg-transparent px-3 aria-pressed:bg-background data-pressed:bg-background"
+					className="rounded-full px-3 text-white/60 transition-colors hover:bg-white/10 hover:text-white aria-pressed:bg-white/90 data-pressed:bg-white/90 aria-pressed:text-neutral-900 data-pressed:text-neutral-900"
 				>
 					Code
 				</ToggleGroupItem>
@@ -68,8 +68,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 							rel="noreferrer"
 						/>
 					}
-					className="mx-2 hidden items-center justify-center rounded-md p-2 text-xs font-thin md:flex"
-					variant="secondary"
+					className="mx-2 hidden items-center justify-center rounded-full bg-white/15 px-3 py-1 text-xs font-thin text-white transition-colors hover:bg-white/25 md:flex"
 				>
 					Sponsor
 				</Button>
@@ -77,7 +76,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 					href="https://github.com/faisalsaifii/DevMeet"
 					target="_blank"
 					rel="noreferrer"
-					className="m-1 h-6 rounded-full"
+					className="m-1 grid size-7 place-items-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/25"
 				>
 					<Github />
 				</a>

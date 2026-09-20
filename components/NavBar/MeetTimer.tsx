@@ -24,8 +24,8 @@ const MeetTimer = () => {
 	}, [start]);
 
 	return (
-		<div className="m-1 flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white tabular-nums">
-			<Timer className="size-4" />
+		<div className="m-1 flex items-center gap-1.5 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-white tabular-nums backdrop-blur-lg">
+			<Timer className="size-4 text-lavender" />
 			{formatElapsed(elapsed)}
 		</div>
 	);
