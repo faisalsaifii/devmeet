@@ -37,22 +37,22 @@ const Options = () => {
 
 	return (
 		<div className="absolute bottom-0 left-0 z-20 w-full p-3">
-			<div className="mx-auto flex w-fit max-w-full items-center rounded-full border border-white/10 bg-black/55 p-1.5 shadow-2xl shadow-black/50 backdrop-blur-2xl">
-				<div className="flex items-center gap-1.5">
+			<div className="mx-auto flex w-fit max-w-full items-center rounded-full border border-white/10 bg-black/55 p-2 shadow-2xl shadow-black/50 backdrop-blur-2xl">
+				<div className="flex items-center gap-2">
 					<Tooltip>
 						<TooltipTrigger
 							render={
 								<Button
 									size="icon"
 									onClick={toggleMic}
-									className={controlButton(micEnabled)}
+									className={`size-11 ${controlButton(micEnabled)}`}
 								/>
 							}
 						>
 							{micEnabled ? (
-								<Mic className="size-4" />
+								<Mic className="size-5" />
 							) : (
-								<MicOff className="size-4" />
+								<MicOff className="size-5" />
 							)}
 						</TooltipTrigger>
 						<TooltipContent>
@@ -65,14 +65,14 @@ const Options = () => {
 								<Button
 									size="icon"
 									onClick={toggleCamera}
-									className={controlButton(cameraEnabled)}
+									className={`size-11 ${controlButton(cameraEnabled)}`}
 								/>
 							}
 						>
 							{cameraEnabled ? (
-								<Video className="size-4" />
+								<Video className="size-5" />
 							) : (
-								<VideoOff className="size-4" />
+								<VideoOff className="size-5" />
 							)}
 						</TooltipTrigger>
 						<TooltipContent>
@@ -80,18 +80,18 @@ const Options = () => {
 						</TooltipContent>
 					</Tooltip>
 				</div>
-				<div className="mx-1.5 h-6 w-px bg-white/15" />
+				<div className="mx-2 h-7 w-px bg-white/15" />
 				<Tooltip>
 					<TooltipTrigger
 						render={
 							<Button
 								size="icon"
 								onClick={leaveCall}
-								className="rounded-full bg-rose-500 text-white shadow-lg shadow-rose-950/40 hover:bg-rose-600"
+								className="size-11 rounded-full bg-rose-500 text-white shadow-lg shadow-rose-950/40 hover:bg-rose-600"
 							/>
 						}
 					>
-						<PhoneOff className="size-4" />
+						<PhoneOff className="size-5" />
 					</TooltipTrigger>
 					<TooltipContent>Hang up</TooltipContent>
 				</Tooltip>

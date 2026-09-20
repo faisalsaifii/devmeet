@@ -157,7 +157,7 @@ const Compiler = () => {
                 value={editorFontSize}
                 onChange={(e) => setEditorFontSize(e.target.value)}
                 title="Font Size"
-                className="mr-2 h-8 w-20 appearance-none bg-card text-xs font-thin"
+                className="mr-2 h-8 w-20 appearance-none bg-card text-xs font-normal"
                 type="number"
                 max={52}
                 min={1}
@@ -169,7 +169,7 @@ const Compiler = () => {
               >
                 <SelectTrigger
                   title="Theme"
-                  className="mr-2 h-8 bg-card text-xs font-thin"
+                  className="mr-2 h-8 bg-card text-xs font-normal"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -190,7 +190,7 @@ const Compiler = () => {
               >
                 <SelectTrigger
                   title="Language"
-                  className="h-8 bg-card text-xs font-thin"
+                  className="h-8 bg-card text-xs font-normal"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -235,7 +235,7 @@ const Compiler = () => {
             className="flex min-h-0 flex-1 flex-col gap-0"
           >
             <span className="flex rounded-t-md bg-card py-2 pl-3 text-md">
-              <TabsList className="rounded-md bg-muted p-1 font-thin">
+              <TabsList className="rounded-md bg-muted p-1 font-normal">
                 <TabsTrigger
                   value="output"
                   className="data-active:bg-background"

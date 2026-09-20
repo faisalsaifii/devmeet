@@ -71,7 +71,7 @@ const CodeEditor = ({
 				onChange={shared ? undefined : onChange}
 				onMount={handleMount}
 				loading={
-					<div className="w-full h-full flex items-center justify-center text-sm font-thin text-neutral-400">
+					<div className="w-full h-full flex items-center justify-center text-sm font-normal text-neutral-400">
 						Loading editor...
 					</div>
 				}

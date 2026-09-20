@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 const Meet = dynamic(() => import("./Meet"), {
 	ssr: false,
 	loading: () => (
-		<div className="flex h-full items-center justify-center font-thin text-neutral-500">
+		<div className="flex h-full items-center justify-center font-normal text-neutral-500">
 			Starting meeting...
 		</div>
 	),

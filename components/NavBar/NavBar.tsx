@@ -36,7 +36,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 					const next = values[0];
 					if (next) setCurrentWindow(next);
 				}}
-				className="rounded-full border border-white/10 bg-white/10 p-1 font-thin shadow-inner shadow-black/30 backdrop-blur-xl"
+				className="rounded-full border border-white/10 bg-white/10 p-1 font-normal shadow-inner shadow-black/30 backdrop-blur-xl"
 			>
 				<ToggleGroupItem
 					value="meet"
@@ -68,7 +68,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 							rel="noreferrer"
 						/>
 					}
-					className="mx-2 hidden items-center justify-center rounded-full bg-white/15 px-3 py-1 text-xs font-thin text-white transition-colors hover:bg-white/25 md:flex"
+					className="mx-2 hidden items-center justify-center rounded-full bg-white/15 px-3 py-1 text-xs font-normal text-white transition-colors hover:bg-white/25 md:flex"
 				>
 					Sponsor
 				</Button>
@@ -84,9 +84,9 @@ const NavBar = ({ setShowInfo }: { setShowInfo: (show: boolean) => void }) => {
 					size="icon"
 					title="Info"
 					onClick={() => setShowInfo(true)}
-					className="m-1 size-7 rounded-full bg-white/15 text-white hover:bg-white/25"
+					className="m-1 grid size-7 place-items-center rounded-full bg-white/15 text-white hover:bg-white/25"
 				>
-					<Info className="size-4" />
+					<Info className="size-6" />
 				</Button>
 			</div>
 		</nav>

@@ -20,7 +20,7 @@ const Notifications = () => {
 				style={{ zIndex: 100 }}
 			>
 					<CardContent className="p-0">
-						<p className="pr-20 text-3xl font-thin">
+						<p className="pr-20 text-3xl font-normal">
 							{call.name || "Somebody"} has sent an invite
 						</p>
 					</CardContent>

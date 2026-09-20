@@ -22,8 +22,8 @@ const CopyLink = () => {
 			onClick={handleCopy}
 			className={
 				copied
-					? "m-1 flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 text-xs font-thin text-white hover:bg-emerald-600"
-					: "m-1 flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-thin text-white hover:bg-white/25"
+					? "m-1 flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 text-xs font-normal text-white hover:bg-emerald-600"
+					: "m-1 flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-normal text-white hover:bg-white/25"
 			}
 		>
 			{copied ? (

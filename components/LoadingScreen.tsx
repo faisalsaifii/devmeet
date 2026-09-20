@@ -36,7 +36,7 @@ const LoadingScreen = () => {
         ))}
       </div>
 
-      <div className="flex items-center gap-2 font-thin text-muted-foreground">
+      <div className="flex items-center gap-2 font-normal text-muted-foreground">
         <Loader2Icon className="animate-spin size-4" />
         Joining meet{name ? ` as ${name}` : ""}…
       </div>

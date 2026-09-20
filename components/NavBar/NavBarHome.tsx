@@ -22,7 +22,7 @@ const NavBar = ({ setShowInfo }: { setShowInfo?: (show: boolean) => void }) => {
 					href="https://github.com/sponsors/faisalsaifii"
 					target="_blank"
 					rel="noreferrer"
-					className="flex p-2 items-center justify-center mx-2 text-xs font-thin rounded-md bg-neutral-200 dark:bg-neutral-800"
+					className="flex p-2 items-center justify-center mx-2 text-xs font-normal rounded-md bg-neutral-200 dark:bg-neutral-800"
 				>
 					Sponsor
 				</a>
