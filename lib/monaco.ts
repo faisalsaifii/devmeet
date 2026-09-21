@@ -4,10 +4,14 @@ import { loader } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
 self.MonacoEnvironment = {
-	getWorker: () =>
-		new Worker(new URL("../workers/editor.worker.ts", import.meta.url), {
-			type: "module",
-		}),
+	getWorker: (_moduleId, label) =>
+		label === "typescript" || label === "javascript"
+			? new Worker(new URL("../workers/ts.worker.ts", import.meta.url), {
+					type: "module",
+				})
+			: new Worker(new URL("../workers/editor.worker.ts", import.meta.url), {
+					type: "module",
+				}),
 };
 
 loader.config({ monaco });

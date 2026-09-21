@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import * as Y from "yjs";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 
-export const LANGUAGE_CODES = ["c", "cpp", "java", "py"] as const;
+export const LANGUAGE_CODES = ["c", "cpp", "java", "js", "py"] as const;
 export type LanguageCode = (typeof LANGUAGE_CODES)[number];
 
 export const DOC_TEXT_KEY = "doc" as const;
@@ -13,6 +13,7 @@ const STORAGE_KEYS: Record<LanguageCode, string> = {
 	c: "c-code",
 	cpp: "cpp-code",
 	java: "java-code",
+	js: "js-code",
 	py: "py-code",
 };
 

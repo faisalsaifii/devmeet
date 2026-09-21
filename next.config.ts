@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
         "./node_modules/monaco-editor/esm/vs/editor/editor.api.js",
       "monaco-editor/esm/vs/editor/editor.worker.js":
         "./node_modules/monaco-editor/esm/vs/editor/editor.worker.js",
+      "monaco-editor/esm/vs/language/typescript/ts.worker.js":
+        "./node_modules/monaco-editor/esm/vs/language/typescript/ts.worker.js",
     },
   },
 };

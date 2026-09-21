@@ -26,6 +26,7 @@ const LANGUAGES = {
   "54": { label: "C++", monaco: "cpp", code: "cpp" },
   "50": { label: "C", monaco: "c", code: "c" },
   "62": { label: "Java", monaco: "java", code: "java" },
+  "63": { label: "JavaScript", monaco: "javascript", code: "js" },
   "71": { label: "Python", monaco: "python", code: "py" },
 } as const;
 

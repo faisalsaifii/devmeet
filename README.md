@@ -15,7 +15,7 @@ Tired of interviewing candidates over Zoom/Google Meet with nowhere to write cod
 - **Instant rooms** — create a meet with one click and share a simple invite link; each room is capped at 2 members.
 - **Live shared editor** — a full Monaco (VS Code) editor where both sides type together in real time, with remote cursors, selections, and persisted code per language using Yjs.
 - **Built-in compiler** — run your code against stdin and see stdout/stderr/compilation output, all inside the interview (Judge0 backend).
-- **Multiple languages** — C++, C, Java, and Python with syntax highlighting, switchable per room.
+- **Multiple languages** — C++, C, Java, JavaScript, and Python with syntax highlighting, switchable per room.
 - **Peer-to-peer video** — WebRTC audio/video call over `simple-peer`, with mic/camera toggles, live preview before you join, and remote mic/camera indicators.
 - **Interview ergonomics** — resizable video/editor splits, editor light/dark themes, adjustable font size, `Ctrl/Cmd + Enter` to run, and an in-app first-run guide.
 
