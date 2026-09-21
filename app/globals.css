@@ -240,12 +240,13 @@
 
 /* Remote cursors / selections shared via Yjs collaboration */
 .yRemoteSelection {
-  background-color: rgba(250, 129, 0, 0.5);
+  background-color: rgba(160, 107, 255, 0.32);
+  border-radius: 2px;
 }
 
 .yRemoteSelectionHead {
   position: absolute;
-  border-left: 2px solid #fa8100;
+  border-left: 2px solid #a06bff;
   box-sizing: border-box;
 }
 
@@ -253,10 +254,11 @@
   content: "";
   position: absolute;
   left: -2px;
-  background-color: #fa8100;
+  background-color: #a06bff;
   width: 5px;
   height: 5px;
   top: -5px;
+  border-radius: 9999px;
 }
 
 @theme inline {

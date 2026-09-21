@@ -48,8 +48,6 @@ type SocketContextValue = {
 	callUser: () => void;
 	leaveCall: () => void;
 	answerCall: () => void;
-	editorTheme: string;
-	setEditorTheme: (theme: string) => void;
 	editorFontSize: string | number;
 	setEditorFontSize: (size: string | number) => void;
 	currentWindow: string;
@@ -88,7 +86,6 @@ const ContextProvider = ({
 	const [name, setName] = useState(() => getStoredName());
 	const [call, setCall] = useState<Call>({});
 	const [me, setMe] = useState("");
-	const [editorTheme, setEditorTheme] = useState("vs-dark");
 	const [editorFontSize, setEditorFontSize] = useState<string | number>(18);
 	const [currentWindow, setCurrentWindow] = useState("both");
 	const [hydrated, setHydrated] = useState(false);
@@ -123,7 +120,6 @@ const ContextProvider = ({
 
 	/* eslint-disable react-hooks/set-state-in-effect -- hydrate persisted state on the client only */
 	useEffect(() => {
-		setEditorTheme(getStoredValue("editor-theme", "vs-dark"));
 		setEditorFontSize(getStoredValue("editor-font-size", "18"));
 		setCurrentWindow(getStoredValue("current-window", "both"));
 		const { micEnabled: savedMic, cameraEnabled: savedCamera } =
@@ -138,11 +134,10 @@ const ContextProvider = ({
 
 	useEffect(() => {
 		if (!hydrated) return;
-		localStorage.setItem("editor-theme", editorTheme);
 		localStorage.setItem("editor-font-size", String(editorFontSize));
 		localStorage.setItem("current-window", currentWindow);
 		storeMediaState({ micEnabled, cameraEnabled });
-	}, [hydrated, editorTheme, editorFontSize, currentWindow, micEnabled, cameraEnabled]);
+	}, [hydrated, editorFontSize, currentWindow, micEnabled, cameraEnabled]);
 
 	useEffect(() => {
 		const socket = io();
@@ -490,8 +485,6 @@ const ContextProvider = ({
 				callUser,
 				leaveCall,
 				answerCall,
-				editorTheme,
-				setEditorTheme,
 				editorFontSize,
 				setEditorFontSize,
 				currentWindow,

@@ -32,8 +32,6 @@ const LANGUAGES = {
 const Compiler = () => {
   const {
     roomId,
-    editorTheme,
-    setEditorTheme,
     editorFontSize,
     setEditorFontSize,
   } = useSocket();
@@ -182,22 +180,6 @@ const Compiler = () => {
                 max={52}
                 min={1}
               />
-              <Select
-                value={editorTheme}
-                onValueChange={(value) => setEditorTheme(value ?? "light")}
-                items={{ light: "Light", "vs-dark": "Dark" }}
-              >
-                <SelectTrigger
-                  title="Theme"
-                  className="mr-2 h-8 bg-card text-xs font-normal"
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="vs-dark">Dark</SelectItem>
-                </SelectContent>
-              </Select>
               <Select
                 value={languageId}
                 onValueChange={(value) => setLanguageId(value ?? "71")}

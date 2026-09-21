@@ -26,7 +26,7 @@ const CodeEditor = ({
 	awareness,
 	className,
 }: CodeEditorProps) => {
-	const { editorTheme, editorFontSize } = useSocket();
+	const { editorFontSize } = useSocket();
 	const bindingRef = useRef<MonacoBinding | null>(null);
 	const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
 
@@ -63,7 +63,7 @@ const CodeEditor = ({
 		<div className={cn("flex min-h-0 flex-1 p-1 bg-card rounded-b-md", className)}>
 			<Editor
 				language={language}
-				theme={editorTheme}
+				theme="midnight-violet"
 				value={shared ? undefined : value}
 				options={{
 					selectOnLineNumbers: true,
