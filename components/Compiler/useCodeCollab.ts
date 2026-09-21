@@ -7,7 +7,7 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 export const LANGUAGE_CODES = ["c", "cpp", "java", "js", "py"] as const;
 export type LanguageCode = (typeof LANGUAGE_CODES)[number];
 
-export const DOC_TEXT_KEY = "doc" as const;
+export const DOC_FIELD = "doc-content" as const;
 
 const STORAGE_KEYS: Record<LanguageCode, string> = {
 	c: "c-code",
@@ -19,13 +19,10 @@ const STORAGE_KEYS: Record<LanguageCode, string> = {
 
 type CollabElement = { key: string; storageKey: string };
 
-const COLLAB_ELEMENTS: CollabElement[] = [
-	...LANGUAGE_CODES.map((code) => ({
-		key: code,
-		storageKey: STORAGE_KEYS[code],
-	})),
-	{ key: DOC_TEXT_KEY, storageKey: "doc-text" },
-];
+const COLLAB_ELEMENTS: CollabElement[] = LANGUAGE_CODES.map((code) => ({
+	key: code,
+	storageKey: STORAGE_KEYS[code],
+}));
 
 const getCollabUrl = () => {
 	if (typeof window === "undefined") return "ws://localhost:3000/collab";

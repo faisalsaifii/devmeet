@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import CodeEditor from "../CodeEditor";
+import DocEditor from "../DocEditor";
 import { useSocket } from "../Context";
-import { useCodeCollab, DOC_TEXT_KEY } from "./useCodeCollab";
+import { useCodeCollab } from "./useCodeCollab";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -222,13 +223,20 @@ const Compiler = () => {
               </Button>
             </div>
             </span>
-            <CodeEditor
-              key="doc"
-              ytext={collab ? collab.doc.getText(DOC_TEXT_KEY) : undefined}
-              awareness={collab?.provider.awareness}
-              language="markdown"
-              className={currentView === "doc" ? "" : "hidden"}
-            />
+            {collab ? (
+              <DocEditor
+                key="doc"
+                collab={collab}
+                className={currentView === "doc" ? "" : "hidden"}
+              />
+            ) : (
+              <div
+                key="doc-placeholder"
+                className={`flex min-h-0 flex-1 flex-col gap-1 rounded-b-md bg-card p-1 ${
+                  currentView === "doc" ? "" : "hidden"
+                }`}
+              />
+            )}
             <CodeEditor
               key={languageId}
               ytext={collab ? collab.doc.getText(language.code) : undefined}
