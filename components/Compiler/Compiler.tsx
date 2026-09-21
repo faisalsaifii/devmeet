@@ -83,7 +83,8 @@ const Compiler = () => {
     try {
       const sourceCode = getSourceCode();
       if (!sourceCode.trim()) {
-        throw new Error("Please write some code before running");
+        setOutput("Please write some code before running");
+        return;
       }
       const response = await fetch("/api/compile", {
         method: "POST",
