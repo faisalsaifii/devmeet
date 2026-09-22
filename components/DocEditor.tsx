@@ -42,14 +42,11 @@ const CURSOR_USER = {
   color: CURSOR_COLORS[Math.floor(Math.random() * CURSOR_COLORS.length)],
 };
 
-const CollaborationCursor = Extension.create<
-  {
-    provider?: { awareness?: Awareness | null } | null;
-    user?: Record<string, unknown>;
-    cursorStateField?: string;
-  },
-  { destroy: (() => void) | null }
->({
+const CollaborationCursor = Extension.create<{
+  provider?: { awareness?: Awareness | null } | null;
+  user?: Record<string, unknown>;
+  cursorStateField?: string;
+}>({
   name: "collaborationCursor",
   addOptions() {
     return {
@@ -58,29 +55,12 @@ const CollaborationCursor = Extension.create<
       cursorStateField: "cursor",
     };
   },
-  addStorage() {
-    return { destroy: null };
-  },
   addProseMirrorPlugins() {
     const { provider, user, cursorStateField } = this.options;
     const awareness = provider?.awareness;
     if (!awareness) return [];
-    const setUser = () => {
-      const state = awareness.getLocalState();
-      if (state && state.user === user) return;
-      awareness.setLocalStateField("user", user);
-    };
-    setUser();
-    const onUpdate = ({ added }: { added: string[] }) => {
-      if (added.includes("user")) return;
-      setUser();
-    };
-    awareness.on("update", onUpdate);
-    this.storage.destroy = () => awareness.off("update", onUpdate);
+    awareness.setLocalStateField("user", user);
     return [yCursorPlugin(awareness, {}, cursorStateField)];
-  },
-  onDestroy() {
-    if (typeof this.storage.destroy === "function") this.storage.destroy();
   },
 });
 
