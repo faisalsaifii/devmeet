@@ -9,6 +9,8 @@ export type LanguageCode = (typeof LANGUAGE_CODES)[number];
 
 export const DOC_FIELD = "doc-content" as const;
 
+export const WHITEBOARD_FIELD = "whiteboard-content" as const;
+
 const STORAGE_KEYS: Record<LanguageCode, string> = {
 	c: "c-code",
 	cpp: "cpp-code",

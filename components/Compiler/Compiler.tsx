@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import CodeEditor from "../CodeEditor";
 import DocEditor from "../DocEditor";
+import Whiteboard from "../Whiteboard";
 import { useSocket } from "../Context";
 import { useCodeCollab } from "./useCodeCollab";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,12 @@ const LANGUAGES = {
   "71": { label: "Python", monaco: "python", code: "py" },
 } as const;
 
+const EDITOR_VIEWS = ["code", "doc", "board"] as const;
+type EditorView = (typeof EDITOR_VIEWS)[number];
+
+const toEditorView = (value: string | null): EditorView =>
+  EDITOR_VIEWS.includes(value as EditorView) ? (value as EditorView) : "code";
+
 const Compiler = () => {
   const {
     roomId,
@@ -44,7 +51,7 @@ const Compiler = () => {
   const [output, setOutput] = useState("");
   const [languageId, setLanguageId] = useState("71");
   const [currentWindow, setCurrentWindow] = useState("output");
-  const [currentView, setCurrentView] = useState<"code" | "doc">("code");
+  const [currentView, setCurrentView] = useState<EditorView>("code");
   const [isRunning, setIsRunning] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
@@ -57,7 +64,7 @@ const Compiler = () => {
     setOutput(localStorage.getItem("output") || "");
     setLanguageId(localStorage.getItem("language_id") || "71");
     setCurrentWindow(localStorage.getItem("current-io-window") || "output");
-    setCurrentView(localStorage.getItem("current-editor-view") === "doc" ? "doc" : "code");
+    setCurrentView(toEditorView(localStorage.getItem("current-editor-view")));
     setHydrated(true);
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -156,9 +163,7 @@ const Compiler = () => {
         <div className="flex h-full flex-col">
           <Tabs
             value={currentView}
-            onValueChange={(value) =>
-              setCurrentView(value === "doc" ? "doc" : "code")
-            }
+            onValueChange={(value) => setCurrentView(toEditorView(value))}
             className="flex min-h-0 flex-1 flex-col gap-0"
           >
             <span className="flex items-center justify-between rounded-t-md bg-card p-2 pl-3 text-md">
@@ -171,6 +176,9 @@ const Compiler = () => {
                 </TabsTrigger>
                 <TabsTrigger value="doc" className="data-active:bg-background">
                   Doc
+                </TabsTrigger>
+                <TabsTrigger value="board" className="data-active:bg-background">
+                  Board
                 </TabsTrigger>
               </TabsList>
               <div className="flex items-center">
@@ -237,12 +245,17 @@ const Compiler = () => {
                 }`}
               />
             )}
+            <Whiteboard
+              key="board"
+              collab={collab}
+              className={currentView === "board" ? "" : "hidden"}
+            />
             <CodeEditor
               key={languageId}
               ytext={collab ? collab.doc.getText(language.code) : undefined}
               awareness={collab?.provider.awareness}
               language={language.monaco}
-              className={currentView === "doc" ? "hidden" : ""}
+              className={currentView === "code" ? "" : "hidden"}
             />
           </Tabs>
         </div>
