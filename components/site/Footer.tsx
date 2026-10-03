@@ -37,6 +37,19 @@ export function Footer() {
             GitHub
           </a>
         </nav>
+        <a
+          href="https://maidensail.com/startup/devmeet"
+          rel="dofollow"
+          className="sm:ml-6"
+        >
+          <Image
+            src="https://maidensail.com/badge/devmeet.svg"
+            alt="Featured on Maidensail"
+            width={140}
+            height={44}
+            className="h-11 w-auto"
+          />
+        </a>
       </div>
     </footer>
   );
