@@ -43,7 +43,7 @@ export function Footer() {
           className="sm:ml-6"
         >
           <Image
-            src="https://maidensail.com/badge/devmeet.svg"
+            src="https://maidensail.com/badge/devmeet.svg?theme=dark"
             alt="Featured on Maidensail"
             width={140}
             height={44}
